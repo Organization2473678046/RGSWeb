@@ -56,6 +56,7 @@ const user = {
             roles.push('user')
           }
           data.roles = roles
+          // TODO 没有用户名信息
           data.name = rdata[0].username
           response.data = data
 

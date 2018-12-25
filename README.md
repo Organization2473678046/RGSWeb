@@ -18,3 +18,8 @@ npm run build --report
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 >>>>>>> dev
+
+# 一些资料
+
+https://www.jianshu.com/p/bf4cda6b515f?from=groupmessage  
+多个框架权限路由实现方式总结

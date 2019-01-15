@@ -137,6 +137,11 @@
             ref="uploader"
             :url="'http://192.168.3.120:8000/v6/taskpackagesons/'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
+            :filters="{
+              mime_types : [
+                { title : 'Zip files', extensions : 'zip,rar' }
+              ]
+            }"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
             :Browse="browse"

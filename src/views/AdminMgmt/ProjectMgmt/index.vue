@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getTPSchedule, createTPSchedule, updateTPSchedule, delTPSchedule } from '@/api/adminMgmt'
+import { getProjectRegional, createProjectRegional, updateProjectRegional, delProjectRegional } from '@/api/adminMgmt'
 import Pagination from '@/components/Pagination'
 
 export default {
@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     getList() {
-      getTPSchedule(this.listQuery).then(response => {
+      getProjectRegional(this.listQuery).then(response => {
         this.list = response.data
         // this.total = response.data.count
         this.listLoading = false
@@ -105,10 +105,10 @@ export default {
       })
     },
     createData() {
-      createTPSchedule(this.scheduleList).then(response => {
+      createProjectRegional(this.scheduleList).then(response => {
         this.dialogFormVisible = false
         this.$message({
-          message: '添加成功！',
+          message: '创建成功！',
           type: 'success'
         })
         this.getList()
@@ -126,7 +126,7 @@ export default {
       })
     },
     updateData() {
-      updateTPSchedule(this.scheduleList).then(response => {
+      updateProjectRegional(this.scheduleList).then(response => {
         this.dialogFormVisible = false
         this.$message({
           message: '修改成功！',
@@ -139,7 +139,7 @@ export default {
       })
     },
     deleteData(id) {
-      delTPSchedule(id).then(response => {
+      delProjectRegional(id).then(response => {
         this.dialogFormVisible = false
         this.$message({
           message: '删除成功！',

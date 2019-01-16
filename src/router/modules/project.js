@@ -2,19 +2,19 @@ import store from '../../store'
 import { asyncRouterMap } from '../index'
 import Layout from '../../views/layout/Layout'
 
-export function getRegionalMenu () {
+export function getRegionalMenu() {
   return new Promise((resolve, reject) => {
     store.dispatch('GetOperator').then(response => {
       const userMap = [
         {
           id: 1,
           path: '/southeast',
-          title: '东南区域项目'
+          title: '东南区域'
         },
         {
           id: 2,
           path: '/southwest',
-          title: '西南区域项目'
+          title: '西南区域'
         }
       ]
 
@@ -26,7 +26,7 @@ export function getRegionalMenu () {
           alwaysShow: true,
           meta: {
             title: userMap[i].title,
-            icon: 'lock',
+            icon: 'nested',
             roles: ['admin']
           },
           // hidden: true,
@@ -35,8 +35,8 @@ export function getRegionalMenu () {
               path: 'taskpackageList',
               name: 'TaskpackageList' + userMap[i].id,
               component: () => import('@/views/TaskpackageList/index'),
-              props: (route) => ({ query: userMap[i].id }),
-              key:userMap[i].id,
+              props: (route) => ({ regionalName: userMap[i].title }),
+              key: userMap[i].id,
               meta: { title: '任务包列表', icon: 'table', roles: ['user'] }
             },
             {

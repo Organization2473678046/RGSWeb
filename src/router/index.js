@@ -52,7 +52,7 @@ export const asyncRouterMap = [
         meta: {
           title: '用户管理',
           roles: ['admin'] // or you can only set roles in sub nav
-        },
+        }
       },
       {
         path: '/adminMgmt/projectMgmt',

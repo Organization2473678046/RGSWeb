@@ -21,3 +21,11 @@ export function getOperator() {
     method: 'get'
   })
 }
+
+// 获取地图服务地址
+export function getMapServices() {
+  return request({
+    url: '//',
+    method: 'get'
+  })
+}

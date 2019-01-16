@@ -135,13 +135,16 @@
           @inputUploader="inputUploader"-->
           <uploader
             ref="uploader"
-            :url="'http://192.168.3.120:8000/v6/taskpackagesons/'"
+            :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
               mime_types : [
                 { title : 'Zip files', extensions : 'zip,rar' }
               ]
             }"
+            chunk_size="2MB"
+            :max_retries="3"
+            :before-chunk-upload="BeforeChunkUpload"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
             :Browse="browse"
@@ -270,7 +273,7 @@ import Uploader from '@/components/Upload/Uploader'
 export default {
   name: 'TaskpackageList',
   components: { Pagination, UploadDialogComponent, 'uploader': Uploader },
-  props: ['query'],
+
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -295,6 +298,7 @@ export default {
       return parseTime(date, '{y}-{m}-{d} {h}:{i}')
     }
   },
+  props: ['regionalName'],
   data() {
     return {
       dataMGMTDialog: false, // 数据管理Dialog
@@ -320,19 +324,21 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
+        regiontask_name: '',
         describe: '',
-        column: null,
         ordering: null
       },
       subversionListQuery: {
         id: null,
         taskpackage_name: null,
         page: 1,
-        limit: 5
+        limit: 5,
+        regiontask_name: ''
       },
       atRecListQuery: {
         id: null,
         taskpackage_name: null,
+        regiontask_name: '',
         page: 1,
         limit: 5
       },
@@ -346,7 +352,8 @@ export default {
       atFunForm: {
         owner: '',
         describe: '',
-        taskpackage_name: ''
+        taskpackage_name: '',
+        regiontask_name: ''
       },
       atFunRules: {
         operator: [{ required: true, message: '*必填*', trigger: 'blur' }],
@@ -391,7 +398,7 @@ export default {
       if (listQuery !== undefined) {
         this.listQuery.limit = listQuery.limit
       }
-      console.log(this.query)
+      this.listQuery.regiontask_name = this.regionalName
       getTaskpackageList(this.listQuery).then(response => {
         this.taskpackageList = response.data.results
         this.tpTotal = response.data.count
@@ -440,18 +447,20 @@ export default {
       })
     },
     BeforeChunkUpload(up, file, info, blob, offset) {
-      const option = up.getOption()
-      FileMd5(blob.getSource(), (e, md5) => {
-        option.multipart_params.chunk_md5_1 = md5
-      })
-      // const spark = new SparkMD5.ArrayBuffer()
-      // const fileReader = new FileReader()
-      // fileReader.readAsArrayBuffer(blob.getSource())
       // const option = up.getOption()
-      // fileReader.onload = function(e) {
-      //   spark.append(e.target.result) // Append array buffer
-      //   option.multipart_params.chunk_md5_1 = spark.end()
-      // }
+      // const option = up.getOption()
+      // ChunkMd5(blob.getSource(), (e, md5) => {
+      //   option.multipart_params.chunk_md5_1 = md5
+      // })
+      const spark = new SparkMD5.ArrayBuffer()
+      const fileReader = new FileReader()
+      fileReader.readAsArrayBuffer(blob.getSource())
+      const option = up.getOption()
+
+      fileReader.onload = function(e) {
+        spark.append(e.target.result) // Append array buffer
+        option.multipart_params.chunk_md5_1 = spark.end()
+      }
     },
     handleSuccess({ upload }) {
       // 处理同一个文件上传两次无响应问题
@@ -478,6 +487,7 @@ export default {
       subversionListQuery.id = this.taskpackageID
       subversionListQuery.taskpackage_name = this.dataMGMTTitle
       this.getScheduleList()
+      subversionListQuery.regiontask_name = this.regionalName
       getTPSubversionList(subversionListQuery).then(response => {
         this.tpSubversionList = response.data.results
         this.tpsTotal = response.data.count
@@ -500,6 +510,7 @@ export default {
     submitAtOperator() {
       this.$refs.atFunForm.validate(valid => {
         if (valid) {
+          this.atFunForm.regiontask_name = this.regionalName
           atOperator(this.atFunForm).then(response => {
             this.dialogAtFunVisible = false
             this.$message({
@@ -523,15 +534,30 @@ export default {
       }
       atRecListQuery.id = this.taskpackageID
       atRecListQuery.taskpackage_name = this.dataMGMTTitle
+      atRecListQuery.regiontask_name = this.regionalName
       atOperatorRecord(atRecListQuery).then(response => {
         this.dialogAtRecVisible = true
         this.AtRecordList = response.data.results
         this.atRecTotal = response.data.count
       })
     },
-    sortChange(sort) {
-      this.listQuery.column = sort.prop
-      this.listQuery.ordering = sort.order
+    // sortChange(sort) {
+    //   this.listQuery.column = sort.prop
+    //   this.listQuery.ordering = sort.order
+    //   this.fetchData()
+    // },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop !== '') {
+        this.sortByID(order, prop)
+      }
+    },
+    sortByID(order, prop) {
+      if (order === 'ascending') {
+        this.listQuery.ordering = prop
+      } else {
+        this.listQuery.ordering = '-' + prop
+      }
       this.fetchData()
     },
     getScheduleList(name, taskID) {

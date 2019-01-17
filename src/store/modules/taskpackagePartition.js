@@ -15,8 +15,7 @@ const taskpackage = {
     SubmitTaskpackage({ commit }, taskpackageInfo) {
       const name = taskpackageInfo.name.trim()
       return new Promise((resolve, reject) => {
-        debugger
-        submitTaskpackage(name, taskpackageInfo.describe, taskpackageInfo.owner, taskpackageInfo.mapnums, taskpackageInfo.mapnumcounts).then(response => {
+        submitTaskpackage(name, taskpackageInfo.describe, taskpackageInfo.owner, taskpackageInfo.mapnums, taskpackageInfo.mapnumcounts, taskpackageInfo.regiontask_name).then(response => {
           resolve(response)
         }).catch(error => {
           reject(error)

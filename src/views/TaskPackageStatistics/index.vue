@@ -30,6 +30,7 @@ export default {
     RaddarChart,
     PieChart
   },
+  props: ['regionalName'],
   data() {
     return {
       PieChartData: {},
@@ -64,7 +65,7 @@ export default {
     getPieData(val) {
       if (val === 'user') {
         return new Promise((resolve, reject) => {
-          getChartTp().then(response => {
+          getChartTp(this.regionalName).then(response => {
             let pcd = {}
             const data = []
             response.data.forEach((e) => {
@@ -89,7 +90,7 @@ export default {
       }
       if (val === 'schedule') {
         return new Promise((resolve, reject) => {
-          getChartTPSchedule().then(response => {
+          getChartTPSchedule(this.regionalName).then(response => {
             let pcd = {}
             const data = []
             response.data.forEach((e) => {

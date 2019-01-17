@@ -37,9 +37,11 @@ import VectorSource from 'ol/source/Vector.js'
 import { TileArcGISRest } from 'ol/source.js'
 import 'ol-layerswitcher/src/ol-layerswitcher.css'
 import LayerSwitcher from 'ol-layerswitcher/src/ol-layerswitcher'
+import { getMapServices } from '@/api/taskpackagePartition'
 
 export default {
   name: 'TaskpackagePartition',
+  props: ['regionalName'],
   data() {
     return {
       submitTPDisable: true,
@@ -49,7 +51,8 @@ export default {
         describe: '',
         owner: '',
         mapnums: '',
-        mapnumcounts: ''
+        mapnumcounts: '',
+        regiontask_name: ''
       },
       taskpackageRules: {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
@@ -67,88 +70,103 @@ export default {
   },
   methods: {
     initMap() {
-      const _this = this
+      getMapServices(this.regionalName).then(response => {
+        const _this = this
 
-      const dituMapServerUrl = 'http://192.168.3.120:6080/arcgis/rest/services/ditu/MapServer'
+        const dituMapServerUrl = response.data[0].basemapservice
 
-      const mmanageMapServerUrl = 'http://192.168.3.120:6080/arcgis/rest/services/mmanage/MapServer'
+        const mmanageMapServerUrl = response.data[0].mapindexmapservice
 
-      const featureServerUrl = 'http://192.168.3.120:6080/arcgis/rest/services/mmanage/FeatureServer/'
+        const featureServerUrl = response.data[0].mapindexfeatureservice
 
-      const layer = '0'
+        const scheduleServerUrl = response.data[0].mapindexschedulemapservice
 
-      const esrijsonFormat = new EsriJSON()
+        const layer = '0'
 
-      const vectorSource = new VectorSource({})
+        const esrijsonFormat = new EsriJSON()
 
-      const layers = [
-        new Group({
-          title: '底图',
-          layers: [
-            new TileLayer({
-              title: '中国地图',
-              type: 'base',
-              source: new TileArcGISRest({
-                url: dituMapServerUrl,
-                wrapX: false
+        const vectorSource = new VectorSource({})
+
+        const layers = [
+          new Group({
+            title: '底图',
+            layers: [
+              new TileLayer({
+                title: '中国地图',
+                type: 'base',
+                source: new TileArcGISRest({
+                  url: dituMapServerUrl,
+                  wrapX: false
+                })
               })
-            })
-          ]
-        }),
-        new Group({
-          title: '要素地图',
-          layers: [
-            new TileLayer({
-              title: '接图表',
-              source: new TileArcGISRest({
-                url: mmanageMapServerUrl,
-                wrapX: false
+            ]
+          }),
+          new Group({
+            title: '要素地图',
+            layers: [
+              new TileLayer({
+                title: '接图表',
+                source: new TileArcGISRest({
+                  url: mmanageMapServerUrl,
+                  wrapX: false
+                })
+              }),
+              new VectorLayer({
+                source: vectorSource
               })
-            }),
-            new VectorLayer({
-              source: vectorSource
-            })
-          ]
+            ]
+          }),
+          new Group({
+            title: '进度',
+            layers: [
+              new TileLayer({
+                title: '进度',
+                source: new TileArcGISRest({
+                  url: scheduleServerUrl,
+                  wrapX: false
+                })
+              })
+            ]
+          })
+        ]
+
+        const map = new Map({
+          layers: layers,
+          target: document.getElementById('map'),
+          view: new View({
+            // projection: "EPSG:3857",
+            center: fromLonLat([107.615838, 32.097535]),
+            zoom: 3.4
+          })
         })
-      ]
 
-      const map = new Map({
-        layers: layers,
-        target: document.getElementById('map'),
-        view: new View({
-          // projection: "EPSG:3857",
-          center: fromLonLat([107.615838, 32.097535]),
-          zoom: 3.4
+        const layerSwitcher = new LayerSwitcher({
+          tipLabel: 'Légende' // Optional label for button
         })
-      })
+        map.addControl(layerSwitcher)
 
-      const layerSwitcher = new LayerSwitcher({
-        tipLabel: 'Légende' // Optional label for button
-      })
-      map.addControl(layerSwitcher)
+        // a normal select interaction to handle click
+        const select = new Select()
+        map.addInteraction(select)
 
-      // a normal select interaction to handle click
-      const select = new Select()
-      map.addInteraction(select)
+        const selectedFeatures = select.getFeatures()
 
-      const selectedFeatures = select.getFeatures()
+        // a DragBox interaction used to select features by drawing boxes
+        const dragBox = new DragBox({
+          condition: platformModifierKeyOnly
+        })
 
-      // a DragBox interaction used to select features by drawing boxes
-      const dragBox = new DragBox({
-        condition: platformModifierKeyOnly
-      })
+        map.addInteraction(dragBox)
 
-      map.addInteraction(dragBox)
-
-      // 触发框选
-      dragBox.on('boxend', function(e) {
-        // features that intersect the box are added to the collection of
-        // selected features
-        var extent = dragBox.getGeometry().getExtent()
-        var url = featureServerUrl + layer + '/query/?f=json&' +
-          'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
-          encodeURIComponent(
-            '{"xmin":' +
+        // 触发框选
+        dragBox.on('boxend', function(e) {
+          // features that intersect the box are added to the collection of
+          // selected features
+          var extent = dragBox.getGeometry().getExtent()
+          var url = featureServerUrl + layer + '/query/?f=json&' +
+            'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
+            encodeURIComponent(
+              '{"xmin":' +
               extent[0] +
               ',"ymin":' +
               extent[1] +
@@ -157,55 +175,59 @@ export default {
               ',"ymax":' +
               extent[3] +
               ',"spatialReference":{"wkid":3857}}'
-          ) + '&geometryType=esriGeometryEnvelope&inSR=3857&outFields=*' + '&outSR=3857'
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          success: function(response) {
-            if (response.error) {
-              alert(response.error.message + '\n' + response.error.details.join('\n'))
-            } else {
-              var features = esrijsonFormat.readFeatures(response)
-              if (features.length > 0) {
-                vectorSource.clear()
-                vectorSource.addFeatures(features)
-                vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
-                  selectedFeatures.push(feature)
-                })
+            ) + '&geometryType=esriGeometryEnvelope&inSR=3857&outFields=*' + '&outSR=3857'
+          $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            success: function(response) {
+              if (response.error) {
+                alert(response.error.message + '\n' + response.error.details.join('\n'))
+              } else {
+                var features = esrijsonFormat.readFeatures(response)
+                if (features.length > 0) {
+                  vectorSource.clear()
+                  vectorSource.addFeatures(features)
+                  vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+                    selectedFeatures.push(feature)
+                  })
 
-                // 拉取作业员列表
-                _this.$store.dispatch('GetOperator').then(response => {
-                  _this.operatorList = response.data
-                }).catch(() => { _this.loading = false })
+                  // 拉取作业员列表
+                  _this.$store.dispatch('GetOperator').then(response => {
+                    _this.operatorList = response.data
+                  }).catch(() => { _this.loading = false })
 
-                _this.submitTPDisable = false
+                  _this.submitTPDisable = false
+                }
               }
             }
+          })
+        })
+
+        // clear selection when drawing a new box and when clicking on the map
+        dragBox.on('boxstart', function() {
+          selectedFeatures.clear()
+        })
+
+        selectedFeatures.on(['add', 'remove'], function() {
+          var names = selectedFeatures.getArray().map(function(feature) {
+            return feature.get('new_jbmapn')
+          })
+          _this.taskpackageForm.mapnumcounts = names.length
+          if (names.length > 0) {
+            _this.taskpackageForm.mapnums = names.join(',')
+          } else {
+            _this.taskpackageForm.mapnums = ''
           }
         })
-      })
-
-      // clear selection when drawing a new box and when clicking on the map
-      dragBox.on('boxstart', function() {
-        selectedFeatures.clear()
-      })
-
-      selectedFeatures.on(['add', 'remove'], function() {
-        var names = selectedFeatures.getArray().map(function(feature) {
-          return feature.get('new_jbmapn')
-        })
-        _this.taskpackageForm.mapnumcounts = names.length
-        if (names.length > 0) {
-          _this.taskpackageForm.mapnums = names.join(',')
-        } else {
-          _this.taskpackageForm.mapnums = ''
-        }
+      }).catch(error => {
+        reject(error)
       })
     },
     submitTaskpackage() {
       this.$refs.taskpackageForm.validate(valid => {
         if (valid) {
           this.loading = true
+          this.taskpackageForm.regiontask_name = this.regionalName
           this.$store.dispatch('SubmitTaskpackage', this.taskpackageForm).then(response => {
             this.submitTPDisable = true
             this.loading = false

@@ -1,15 +1,15 @@
 import request from '@/utils/request'
 
-export function getChartTp() {
+export function getChartTp(regionalName) {
   return request({
-    url: '/echarttaskpackages/',
+    url: '/echarttaskpackages/?regiontask_name=' + regionalName,
     method: 'get'
   })
 }
 
-export function getChartTPSchedule() {
+export function getChartTPSchedule(regionalName) {
   return request({
-    url: '/echartschedules/',
+    url: '/echartschedules/?regiontask_name=' + regionalName,
     method: 'get'
   })
 }

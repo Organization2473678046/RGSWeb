@@ -1,12 +1,13 @@
 import request from '@/utils/request'
 
-export function submitTaskpackage(name, describe, owner, mapnums, mapnumcounts) {
+export function submitTaskpackage(name, describe, owner, mapnums, mapnumcounts, regiontask_name) {
   const data = {
     name,
     describe,
     owner,
     mapnums,
-    mapnumcounts
+    mapnumcounts,
+    regiontask_name
   }
   return request({
     url: '/taskpackages/',
@@ -23,9 +24,9 @@ export function getOperator() {
 }
 
 // 获取地图服务地址
-export function getMapServices() {
+export function getMapServices(projectName) {
   return request({
-    url: '//',
+    url: '/regiontasks/?regiontask_name=' + projectName,
     method: 'get'
   })
 }

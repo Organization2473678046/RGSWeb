@@ -62,6 +62,7 @@ import Pagination from '@/components/Pagination'
 export default {
   name: 'AdminMgmt',
   components: { Pagination },
+  props: ['regionalName'],
   data() {
     return {
       tableKey: 0,
@@ -69,12 +70,14 @@ export default {
       dialogStatus: '',
       scheduleList: {
         // id: undefined,
-        schedule: ''
+        schedule: '',
+        regiontask_name:''
       },
       total: 0,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        regiontask_name: ''
       },
       list: null,
       textMap: {
@@ -89,6 +92,7 @@ export default {
   },
   methods: {
     getList() {
+      this.listQuery.regiontask_name = this.regionalName
       getTPSchedule(this.listQuery).then(response => {
         this.list = response.data
         // this.total = response.data.count
@@ -105,6 +109,7 @@ export default {
       })
     },
     createData() {
+      this.scheduleList.regiontask_name = this.regionalName
       createTPSchedule(this.scheduleList).then(response => {
         this.dialogFormVisible = false
         this.$message({

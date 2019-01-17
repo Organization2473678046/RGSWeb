@@ -8,10 +8,11 @@ export function getUserList() {
 }
 
 // 进度管理 CURD START
-export function getTPSchedule() {
+export function getTPSchedule(params) {
   return request({
     url: '/schedule/',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -44,14 +45,14 @@ export function delTPSchedule(params) {
 // 项目管理 CURD START
 export function getProjectRegional() {
   return request({
-    url: '/schedule/',
+    url: '/regiontasks/',
     method: 'get'
   })
 }
 
 export function createProjectRegional(params) {
   return request({
-    url: '/schedule/',
+    url: '/regiontasks/',
     method: 'post',
     data: params
   })
@@ -59,7 +60,7 @@ export function createProjectRegional(params) {
 
 export function updateProjectRegional(params) {
   return request({
-    url: '/schedule/' + params.id + '/',
+    url: '/regiontasks/' + params.id + '/',
     method: 'put',
     data: {
       schedule: params.schedule
@@ -69,7 +70,7 @@ export function updateProjectRegional(params) {
 
 export function delProjectRegional(params) {
   return request({
-    url: '/schedule/' + params + '/',
+    url: '/regiontasks/' + params + '/',
     method: 'DELETE'
   })
 }

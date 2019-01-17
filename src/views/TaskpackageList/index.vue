@@ -144,7 +144,6 @@
             }"
             chunk_size="2MB"
             :max_retries="3"
-            :before-chunk-upload="BeforeChunkUpload"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
             :Browse="browse"
@@ -273,7 +272,7 @@ import Uploader from '@/components/Upload/Uploader'
 export default {
   name: 'TaskpackageList',
   components: { Pagination, UploadDialogComponent, 'uploader': Uploader },
-
+  props: ['regionalName'],
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -298,7 +297,6 @@ export default {
       return parseTime(date, '{y}-{m}-{d} {h}:{i}')
     }
   },
-  props: ['regionalName'],
   data() {
     return {
       dataMGMTDialog: false, // 数据管理Dialog
@@ -423,7 +421,7 @@ export default {
       }
     },
     beforeUpload(up, file) {
-      up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'schedule': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName, 'file_md5': file.md5 })
+      up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'schedule': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName, 'file_md5': file.md5, 'regiontask_name': this.uploadPra[this.upPraIndex].regiontask_name })
       this.upPraIndex++
     },
     filesAdded(up, files) {
@@ -432,6 +430,7 @@ export default {
       upp.hp = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
       upp.taskID = this.taskpackageID
       upp.tpName = this.dataMGMTTitle
+      upp.regiontask_name = this.regionalName
       this.uploadPra.push(upp)
 
       this.dataMGMTDialog = false
@@ -445,22 +444,6 @@ export default {
           f.status = 1
         })
       })
-    },
-    BeforeChunkUpload(up, file, info, blob, offset) {
-      // const option = up.getOption()
-      // const option = up.getOption()
-      // ChunkMd5(blob.getSource(), (e, md5) => {
-      //   option.multipart_params.chunk_md5_1 = md5
-      // })
-      const spark = new SparkMD5.ArrayBuffer()
-      const fileReader = new FileReader()
-      fileReader.readAsArrayBuffer(blob.getSource())
-      const option = up.getOption()
-
-      fileReader.onload = function(e) {
-        spark.append(e.target.result) // Append array buffer
-        option.multipart_params.chunk_md5_1 = spark.end()
-      }
     },
     handleSuccess({ upload }) {
       // 处理同一个文件上传两次无响应问题

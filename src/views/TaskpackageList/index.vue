@@ -125,25 +125,15 @@
         </el-form-item>
         <el-form-item>
           <!--<upload-component
-            :taskpackageID="taskpackageID"
-            :remarks="taskpackageForm.remarks"
-            :on-success="handleSuccess"
             chunk_size="2MB"
-            :max_retries="3"
-            :before-chunk-upload="BeforeChunkUpload"
-            :before-upload="beforeUpload"/>
-          @inputUploader="inputUploader"-->
+            :max_retries="3"/>-->
           <uploader
             ref="uploader"
             :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
-              mime_types : [
-                { title : 'Zip files', extensions : 'zip,rar' }
-              ]
+              mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
             }"
-            chunk_size="2MB"
-            :max_retries="3"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
             :Browse="browse"
@@ -254,6 +244,7 @@
     <upload-dialog-component
       :table-data="tableData"
       :is-display="isDisplay"
+      :up-dialog-min-max="upDialogMinMax"
       :is-min-display="isMinDisplay"
       :up="up"/>
   </div>
@@ -362,11 +353,12 @@ export default {
         limit: 10,
         describe: undefined
       },
+      scheduleQuery: {
+        regiontask_name: ''
+      },
       handleProgressList: null,
       uploadPra: [], // 上传文件参数对象
-      upPraIndex: 0, // 上传文件参数下标
-      upTaskAttr: [],
-      infoChunk: null
+      upPraIndex: 0  // 上传文件参数下标
     }
   },
   watch: {
@@ -445,13 +437,14 @@ export default {
         })
       })
     },
-    handleSuccess({ upload }) {
-      // 处理同一个文件上传两次无响应问题
-      upload.value = ''
-      // 上传成功，刷新子版本列表
-      this.handleData(this.subversionListQuery)
-
-      this.dataMGMTDialog = false
+    upDialogMinMax() {
+      if (this.isDisplay === true) {
+        this.isDisplay = false
+        this.isMinDisplay = true
+      } else {
+        this.isDisplay = true
+        this.isMinDisplay = false
+      }
     },
     downloadTaskpackage(fileUrl) {
       window.open(fileUrl)
@@ -524,11 +517,6 @@ export default {
         this.atRecTotal = response.data.count
       })
     },
-    // sortChange(sort) {
-    //   this.listQuery.column = sort.prop
-    //   this.listQuery.ordering = sort.order
-    //   this.fetchData()
-    // },
     sortChange(data) {
       const { prop, order } = data
       if (prop !== '') {
@@ -545,7 +533,8 @@ export default {
     },
     getScheduleList(name, taskID) {
       // 拉取进度列表
-      getTPSchedule().then(response => {
+      this.scheduleQuery.regiontask_name = this.regionalName
+      getTPSchedule(this.scheduleQuery).then(response => {
         this.handleProgressList = response.data
         this.listLoading = false
       }).catch(error => {

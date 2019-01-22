@@ -4,14 +4,16 @@
       <h3><span class="dialog-header-title"><em class="select-text">文件上传列表</em></span></h3>
       <div class="dialog-control">
         <span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span>
-        <span class="dialog-icon dialog-min icon icon-minimize"><span class="sicon" @click="minOrMax('min')">-</span></span>
+        <span class="dialog-icon dialog-min icon icon-minimize"><span class="sicon" @click="upDialogMinMax">-</span></span>
       </div>
     </div>
-    <div v-show="isMinDisplay" class="dialog-min-header">
-      <div class="header-progress" style="width: 0%; display: none;"/>
+    <div v-show="isMinDisplay" class="dialog-header">
+      <div class="header-progress" style="width: 0%; display: none;"></div>
       <h3><span class="dialog-header-title"><em class="select-text">文件上传列表</em></span></h3>
-      <div class="dialog-control"><span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span><span
-        class="dialog-icon dialog-back icon icon-maximizing"><span class="sicon" @click="minOrMax('max')">□</span></span></div>
+      <div class="dialog-control">
+        <span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span>
+        <span class="dialog-icon dialog-back icon icon-maximizing"><span class="sicon" @click="upDialogMinMax">□</span></span>
+      </div>
     </div>
     <div v-show="isDisplay" class="dialog-body">
       <div class="uploader-list-wrapper">
@@ -70,6 +72,7 @@ export default {
   props: {
     tableData: Array,
     up: Object,
+    upDialogMinMax: Function,
     isDisplay: Boolean,
     isMinDisplay: Boolean
   },
@@ -87,15 +90,6 @@ export default {
     deleteFile(id) {
       const file = this.up.getFile(id)
       this.up.removeFile(file)
-    },
-    minOrMax(status) {
-      if (status === 'min') {
-        this.isDisplay = false
-        this.isMinDisplay = true
-      } else {
-        this.isDisplay = true
-        this.isMinDisplay = false
-      }
     }
   }
 }

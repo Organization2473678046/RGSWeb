@@ -13,7 +13,7 @@
         </el-form-item>
         <el-form-item prop="owner">
           <el-select v-model="taskpackageForm.owner" :disabled="submitTPDisable" placeholder="请选择作业员" prop="owner" class="taskinfo-item" style="width: 140px">
-            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.username" :value="operator.username"/>
+            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.reallyname" :value="operator.username"/>
           </el-select>
         </el-form-item>
         <el-button :disabled="submitTPDisable" class="taskinfo-item" style="margin-left: 10px;" type="primary" icon="el-icon-menu" @click.native.prevent="submitTaskpackage">提交</el-button>
@@ -163,7 +163,7 @@ export default {
           // features that intersect the box are added to the collection of
           // selected features
           var extent = dragBox.getGeometry().getExtent()
-          var url = featureServerUrl + layer + '/query/?f=json&' +
+          var url = featureServerUrl + '/' +layer + '/query/?f=json&' +
             'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
             encodeURIComponent(
               '{"xmin":' +

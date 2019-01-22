@@ -34,6 +34,7 @@ export default new Router({
 // 动态需要根据权限加载的路由表
 export const asyncRouterMap = [
   {
+<<<<<<< HEAD
     path: '/taskpackageList',
     component: Layout,
     meta: { roles: ['user'] },
@@ -69,5 +70,38 @@ export const asyncRouterMap = [
     }]
   },
 
+=======
+    path: '/adminMgmt',
+    component: Layout,
+    redirect: '/adminMgmt/index',
+    alwaysShow: true,
+    meta: {
+      title: '后台管理',
+      icon: 'lock',
+      roles: ['admin']
+    },
+    // hidden: true,
+    children: [
+      // {
+      //   path: '/adminMgmt/userMgmt',
+      //   component: () => import('@/views/AdminMgmt/UserMgmt/index'),
+      //   name: 'UserMgmt',
+      //   meta: {
+      //     title: '用户管理',
+      //     roles: ['admin'] // or you can only set roles in sub nav
+      //   }
+      // },
+      {
+        path: '/adminMgmt/projectMgmt',
+        component: () => import('@/views/AdminMgmt/ProjectMgmt/index'),
+        name: 'ProjectMgmt',
+        meta: {
+          title: '项目管理',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+>>>>>>> dev-v7
   { path: '*', redirect: '/404', hidden: true }
 ]

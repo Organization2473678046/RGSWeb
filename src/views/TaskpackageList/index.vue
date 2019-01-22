@@ -2,7 +2,11 @@
   <div class="app-container">
 
     <div class="filter-container">
+<<<<<<< HEAD
       <el-input v-model="listQuery.describe" placeholder="请输入描述信息进行查询" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+=======
+      <el-input v-model="listQuery.describe" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+>>>>>>> dev-v7
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
@@ -12,9 +16,14 @@
       :data="taskpackageList"
       element-loading-text="Loading"
       border
+<<<<<<< HEAD
       :default-sort = "{prop: 'id'}"
       @sort-change='sortChange'
       highlight-current-row>
+=======
+      highlight-current-row
+      @sort-change="sortChange">
+>>>>>>> dev-v7
       <el-table-column prop="id" align="center" sortable="custom" label="ID" width="65">
         <template slot-scope="scope">
           {{ scope.row.id }}
@@ -25,14 +34,22 @@
           {{ scope.row.name }}
         </template>
       </el-table-column>
+<<<<<<< HEAD
       <el-table-column prop="mapnumcounts" label="图幅数" width="89">
+=======
+      <el-table-column prop="mapnumcounts" label="图幅数" sortable="custom" width="89">
+>>>>>>> dev-v7
         <template slot-scope="scope">
           {{ scope.row.mapnumcounts }}
         </template>
       </el-table-column>
       <el-table-column prop="owner" label="作业员" sortable="custom" width="100" align="center">
         <template slot-scope="scope">
+<<<<<<< HEAD
           <span>{{ scope.row.owner }}</span>
+=======
+          <span>{{ scope.row.reallyname }}</span>
+>>>>>>> dev-v7
         </template>
       </el-table-column>
       <el-table-column label="描述" align="center">
@@ -40,14 +57,27 @@
           <span>{{ scope.row.describe }}</span>
         </template>
       </el-table-column>
+<<<<<<< HEAD
       <el-table-column class-name="status-col" label="状态" width="100" align="center">
+=======
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="裁切状态" width="100" align="center">
+>>>>>>> dev-v7
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status | statusDisplayFilter }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="前任" width="100" align="center">
         <template slot-scope="scope">
+<<<<<<< HEAD
           <span>{{ scope.row.exowner === null?'无':scope.row.exowner }}</span>
+=======
+          <span>{{ scope.row.exreallyname === null?'无':scope.row.exreallyname }}</span>
+>>>>>>> dev-v7
         </template>
       </el-table-column>
       <el-table-column label="操作" width="130" align="center">
@@ -68,14 +98,22 @@
             @click="downloadTaskpackage(scope.row.file)"/>
         </template>
       </el-table-column>
+<<<<<<< HEAD
       <el-table-column label="管理数据" width="100" align="center">
+=======
+      <el-table-column label="管理数据" prop="newtaskpackagesonfornotice" sortable="custom" width="105" align="center">
+>>>>>>> dev-v7
         <template slot-scope="scope">
           <el-button
             type="primary"
             size="small"
             icon="el-icon-edit-outline"
             @click="handleData(subversionListQuery, scope.row.id, scope.row.name)"/>
+<<<<<<< HEAD
           <span class="data-remind">{{ scope.row.id }}</span>
+=======
+          <span v-show="role === 'admin' && scope.row.newtaskpackagesonfornotice !== 0" class="data-remind">{{ scope.row.newtaskpackagesonfornotice }}</span>
+>>>>>>> dev-v7
         </template>
       </el-table-column>
       <el-table-column label="@记录" width="100" align="center">
@@ -116,11 +154,16 @@
         </el-form-item>
         <el-form-item prop="handleProgress">
           <el-select v-model="taskpackageForm.handleProgress" placeholder="请选择进度" prop="handleProgress" class="taskinfo-item" style="width: 140px">
+<<<<<<< HEAD
             <el-option v-for="progress in handleProgressList" :label="progress.label" :key="progress.value" :value="progress.value"/>
+=======
+            <el-option v-for="progress in handleProgressList" :label="progress.schedule" :key="progress.id" :value="progress.schedule"/>
+>>>>>>> dev-v7
           </el-select>
         </el-form-item>
         <el-form-item>
           <!--<upload-component
+<<<<<<< HEAD
             :taskpackageID="taskpackageID"
             :remarks="taskpackageForm.remarks"
             :on-success="handleSuccess"
@@ -131,6 +174,17 @@
             :url="'http://192.168.3.120:8000/v3/taskpackagesons/'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{prevent_duplicates:true}"
+=======
+            chunk_size="2MB"
+            :max_retries="3"/>-->
+          <uploader
+            ref="uploader"
+            :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+            :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
+            :filters="{
+              mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
+            }"
+>>>>>>> dev-v7
             :before-upload="beforeUpload"
             :files-added="filesAdded"
             :Browse="browse"
@@ -153,7 +207,11 @@
         </el-table-column>
         <el-table-column label="上传人" width="100">
           <template slot-scope="scope">
+<<<<<<< HEAD
             {{ scope.row.user_username }}
+=======
+            {{ scope.row.reallyname }}
+>>>>>>> dev-v7
           </template>
         </el-table-column>
         <el-table-column label="上传日期" width="150">
@@ -210,12 +268,20 @@
         </el-table-column>
         <el-table-column label="现任拥有者" width="115">
           <template slot-scope="scope">
+<<<<<<< HEAD
             {{ scope.row.owner }}
+=======
+            {{ scope.row.reallyname }}
+>>>>>>> dev-v7
           </template>
         </el-table-column>
         <el-table-column label="前任拥有者" width="115">
           <template slot-scope="scope">
+<<<<<<< HEAD
             {{ scope.row.exowner }}
+=======
+            {{ scope.row.exreallyname }}
+>>>>>>> dev-v7
           </template>
         </el-table-column>
         <el-table-column label="描述">
@@ -241,6 +307,10 @@
     <upload-dialog-component
       :table-data="tableData"
       :is-display="isDisplay"
+<<<<<<< HEAD
+=======
+      :up-dialog-min-max="upDialogMinMax"
+>>>>>>> dev-v7
       :is-min-display="isMinDisplay"
       :up="up"/>
   </div>
@@ -248,14 +318,27 @@
 
 <script>
 import { getTaskpackageList, getTPSubversionList, atOperator, atOperatorRecord } from '@/api/taskpackageList'
+<<<<<<< HEAD
 import UploadDialogComponent from '@/components/Upload/uploadDialog.vue'
 import Pagination from '@/components/Pagination'
 import { parseTime } from '@/utils'
+=======
+import { getTPSchedule } from '@/api/adminMgmt'
+import UploadDialogComponent from '@/components/Upload/uploadDialog.vue'
+import Pagination from '@/components/Pagination'
+import { parseTime } from '@/utils'
+import '@/utils/js-spark-md5'
+import FileMd5 from '@/utils/file-md5'
+>>>>>>> dev-v7
 import Uploader from '@/components/Upload/Uploader'
 
 export default {
   name: 'TaskpackageList',
   components: { Pagination, UploadDialogComponent, 'uploader': Uploader },
+<<<<<<< HEAD
+=======
+  props: ['regionalName'],
+>>>>>>> dev-v7
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -269,7 +352,11 @@ export default {
     statusDisplayFilter(status) {
       const statusMap = {
         0: '等待裁切',
+<<<<<<< HEAD
         1: '已完成',
+=======
+        1: '裁切完成',
+>>>>>>> dev-v7
         2: '裁切中',
         3: '裁切错误'
       }
@@ -305,19 +392,33 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
+<<<<<<< HEAD
         describe: null,
         column: null,
+=======
+        regiontask_name: '',
+        describe: '',
+>>>>>>> dev-v7
         ordering: null
       },
       subversionListQuery: {
         id: null,
         taskpackage_name: null,
         page: 1,
+<<<<<<< HEAD
         limit: 5
+=======
+        limit: 5,
+        regiontask_name: ''
+>>>>>>> dev-v7
       },
       atRecListQuery: {
         id: null,
         taskpackage_name: null,
+<<<<<<< HEAD
+=======
+        regiontask_name: '',
+>>>>>>> dev-v7
         page: 1,
         limit: 5
       },
@@ -331,7 +432,12 @@ export default {
       atFunForm: {
         owner: '',
         describe: '',
+<<<<<<< HEAD
         taskpackage_name: ''
+=======
+        taskpackage_name: '',
+        regiontask_name: ''
+>>>>>>> dev-v7
       },
       atFunRules: {
         operator: [{ required: true, message: '*必填*', trigger: 'blur' }],
@@ -342,6 +448,7 @@ export default {
         limit: 10,
         describe: undefined
       },
+<<<<<<< HEAD
       handleProgressList: [{
         value: '0',
         label: '修改缝隙'
@@ -370,13 +477,24 @@ export default {
       uploadPra: [], // 上传文件参数对象
       upPraIndex: 0, // 上传文件参数下标
       upTaskAttr: []
+=======
+      scheduleQuery: {
+        regiontask_name: ''
+      },
+      handleProgressList: null,
+      uploadPra: [], // 上传文件参数对象
+      upPraIndex: 0  // 上传文件参数下标
+>>>>>>> dev-v7
     }
   },
   watch: {
     files: {
       handler() {
         this.tableData = []
+<<<<<<< HEAD
         // let upTaskAttrIndex = 0
+=======
+>>>>>>> dev-v7
         this.files.forEach((e) => {
           this.tableData.push({
             name: e.name,
@@ -384,9 +502,13 @@ export default {
             status: e.status,
             id: e.id,
             percent: e.percent
+<<<<<<< HEAD
             // taskAttribution: this.upTaskAttr[upTaskAttrIndex].taskAttr
           })
           // upTaskAttrIndex++
+=======
+          })
+>>>>>>> dev-v7
         })
       },
       deep: true
@@ -396,15 +518,28 @@ export default {
     this.fetchData()
   },
   methods: {
+<<<<<<< HEAD
     fetchData() {
       this.listLoading = true
       // 获取任务包列表
+=======
+    fetchData(listQuery) {
+      this.listLoading = true
+      // 获取任务包列表
+      if (listQuery !== undefined) {
+        this.listQuery.limit = listQuery.limit
+      }
+      this.listQuery.regiontask_name = this.regionalName
+>>>>>>> dev-v7
       getTaskpackageList(this.listQuery).then(response => {
         this.taskpackageList = response.data.results
         this.tpTotal = response.data.count
         this.listLoading = false
       }).catch(error => {
+<<<<<<< HEAD
         reject(error)
+=======
+>>>>>>> dev-v7
       })
     },
     handleFilter() {
@@ -424,20 +559,32 @@ export default {
       }
     },
     beforeUpload(up, file) {
+<<<<<<< HEAD
       up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'handle_progress': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName })
+=======
+      up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'schedule': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName, 'file_md5': file.md5, 'regiontask_name': this.uploadPra[this.upPraIndex].regiontask_name })
+>>>>>>> dev-v7
       this.upPraIndex++
     },
     filesAdded(up, files) {
       const upp = {}
       upp.remarks = this.taskpackageForm.remarks
+<<<<<<< HEAD
       upp.hp = this.taskpackageForm.handleProgress
       upp.taskID = this.taskpackageID
       upp.tpName = this.dataMGMTTitle
+=======
+      upp.hp = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
+      upp.taskID = this.taskpackageID
+      upp.tpName = this.dataMGMTTitle
+      upp.regiontask_name = this.regionalName
+>>>>>>> dev-v7
       this.uploadPra.push(upp)
 
       this.dataMGMTDialog = false
       this.isDisplay = true
       this.isMinDisplay = false
+<<<<<<< HEAD
     },
     handleSuccess({ upload }) {
       // 处理同一个文件上传两次无响应问题
@@ -446,6 +593,25 @@ export default {
       this.handleData(this.subversionListQuery)
 
       this.dataMGMTDialog = false
+=======
+
+      files.forEach((f) => {
+        f.status = -1
+        FileMd5(f.getNative(), (e, md5) => {
+          f['md5'] = md5
+          f.status = 1
+        })
+      })
+    },
+    upDialogMinMax() {
+      if (this.isDisplay === true) {
+        this.isDisplay = false
+        this.isMinDisplay = true
+      } else {
+        this.isDisplay = true
+        this.isMinDisplay = false
+      }
+>>>>>>> dev-v7
     },
     downloadTaskpackage(fileUrl) {
       window.open(fileUrl)
@@ -458,16 +624,24 @@ export default {
         this.dataMGMTTitle = name
       }
 
+<<<<<<< HEAD
       // 上传为文件列表所属任务包
       // let upp = {}
       // upp.taskAttr = this.dataMGMTTitle
       // this.upTaskAttr.push(upp)
 
+=======
+>>>>>>> dev-v7
       this.dataMGMTDialog = true
 
       // 获取任务包对应子版本列表
       subversionListQuery.id = this.taskpackageID
       subversionListQuery.taskpackage_name = this.dataMGMTTitle
+<<<<<<< HEAD
+=======
+      this.getScheduleList()
+      subversionListQuery.regiontask_name = this.regionalName
+>>>>>>> dev-v7
       getTPSubversionList(subversionListQuery).then(response => {
         this.tpSubversionList = response.data.results
         this.tpsTotal = response.data.count
@@ -476,6 +650,10 @@ export default {
     },
     handleClose(done) {
       done()
+<<<<<<< HEAD
+=======
+      this.fetchData()
+>>>>>>> dev-v7
     },
     atOperatorFun(name, taskID) {
       this.dialogAtFunVisible = true
@@ -484,17 +662,29 @@ export default {
       // 拉取作业员列表
       this.$store.dispatch('GetOperator').then(response => {
         this.operatorList = response.data
+<<<<<<< HEAD
       }).catch(() => { _this.loading = false })
+=======
+      }).catch(() => { this.listLoading = false })
+>>>>>>> dev-v7
     },
     submitAtOperator() {
       this.$refs.atFunForm.validate(valid => {
         if (valid) {
+<<<<<<< HEAD
+=======
+          this.atFunForm.regiontask_name = this.regionalName
+>>>>>>> dev-v7
           atOperator(this.atFunForm).then(response => {
             this.dialogAtFunVisible = false
             this.$message({
               message: '已完成任务包指派！',
               type: 'success'
             })
+<<<<<<< HEAD
+=======
+            this.fetchData()
+>>>>>>> dev-v7
           })
         } else {
           console.log('提交错误!!')
@@ -511,16 +701,45 @@ export default {
       }
       atRecListQuery.id = this.taskpackageID
       atRecListQuery.taskpackage_name = this.dataMGMTTitle
+<<<<<<< HEAD
+=======
+      atRecListQuery.regiontask_name = this.regionalName
+>>>>>>> dev-v7
       atOperatorRecord(atRecListQuery).then(response => {
         this.dialogAtRecVisible = true
         this.AtRecordList = response.data.results
         this.atRecTotal = response.data.count
       })
     },
+<<<<<<< HEAD
     sortChange(sort) {
       this.listQuery.column = sort.prop
       this.listQuery.ordering = sort.order
       this.fetchData()
+=======
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop !== '') {
+        this.sortByID(order, prop)
+      }
+    },
+    sortByID(order, prop) {
+      if (order === 'ascending') {
+        this.listQuery.ordering = prop
+      } else {
+        this.listQuery.ordering = '-' + prop
+      }
+      this.fetchData()
+    },
+    getScheduleList(name, taskID) {
+      // 拉取进度列表
+      this.scheduleQuery.regiontask_name = this.regionalName
+      getTPSchedule(this.scheduleQuery).then(response => {
+        this.handleProgressList = response.data
+        this.listLoading = false
+      }).catch(error => {
+      })
+>>>>>>> dev-v7
     }
   }
 }
@@ -530,6 +749,7 @@ export default {
   .data-remind{
     position: absolute;
     left: 64%;
+<<<<<<< HEAD
     width: 1.3rem;
     height: 1.3rem;
     border-radius: 100%;
@@ -539,5 +759,16 @@ export default {
     top: 2px;
     font-weight: 600;
     /* line-height: 1rem; */
+=======
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 100%;
+    background: #FF0017;
+    color: #ffffff;
+    font-size: 15px;
+    top: 1px;
+    font-weight: 500;
+    line-height: 1.2rem;
+>>>>>>> dev-v7
   }
 </style>

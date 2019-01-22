@@ -1,11 +1,7 @@
 <template/>
 <script>
-<<<<<<< HEAD
-import plupload from 'plupload/js/plupload.full.min.js'
-=======
 // import plupload from 'plupload/js/plupload.full.min.js'
 import plupload from 'plupload/js/plupload.dev.js'
->>>>>>> dev-v7
 export default {
   name: 'Uploader',
   props: {
@@ -135,12 +131,9 @@ export default {
     ChunkUploaded: {
       type: Function
     },
-<<<<<<< HEAD
-=======
     BeforeChunkUpload: {
       type: Function
     },
->>>>>>> dev-v7
     UploadComplete: {
       type: Function
     },
@@ -245,14 +238,11 @@ export default {
             that.ChunkUploaded(up, file, info)
           }
         },
-<<<<<<< HEAD
-=======
         BeforeChunkUpload(up, file, info, blob, offset) {
           if (that.BeforeChunkUpload != null) {
             that.BeforeChunkUpload(up, file, info, blob, offset)
           }
         },
->>>>>>> dev-v7
         UploadComplete(up, files) {
           if (that.UploadComplete != null) {
             that.UploadComplete(up, files)

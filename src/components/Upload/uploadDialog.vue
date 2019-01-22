@@ -4,16 +4,6 @@
       <h3><span class="dialog-header-title"><em class="select-text">文件上传列表</em></span></h3>
       <div class="dialog-control">
         <span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span>
-<<<<<<< HEAD
-        <span class="dialog-icon dialog-min icon icon-minimize"><span class="sicon" @click="minOrMax('min')">-</span></span>
-      </div>
-    </div>
-    <div v-show="isMinDisplay" class="dialog-min-header">
-      <div class="header-progress" style="width: 0%; display: none;"/>
-      <h3><span class="dialog-header-title"><em class="select-text">文件上传列表</em></span></h3>
-      <div class="dialog-control"><span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span><span
-        class="dialog-icon dialog-back icon icon-maximizing"><span class="sicon" @click="minOrMax('max')">□</span></span></div>
-=======
         <span class="dialog-icon dialog-min icon icon-minimize"><span class="sicon" @click="upDialogMinMax">-</span></span>
       </div>
     </div>
@@ -24,7 +14,6 @@
         <span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span>
         <span class="dialog-icon dialog-back icon icon-maximizing"><span class="sicon" @click="upDialogMinMax">□</span></span>
       </div>
->>>>>>> dev-v7
     </div>
     <div v-show="isDisplay" class="dialog-body">
       <div class="uploader-list-wrapper">
@@ -47,32 +36,13 @@
             <el-table-column
               label="状态">
               <template slot-scope="scope">
-<<<<<<< HEAD
-                <span v-if="scope.row.status === 1">准备上传</span>
-=======
                 <span v-if="scope.row.status === -1">正在计算MD5</span>
                 <span v-if="scope.row.status === 1 && scope.row.percent === 0">MD5计算完成，准备上传</span>
->>>>>>> dev-v7
                 <span v-if="scope.row.status === 4" style="color: brown">上传失败</span>
                 <span v-if="scope.row.status === 5" style="color: chartreuse">已上传</span>
                 <el-progress v-if="scope.row.status === 2" :text-inside="true" :stroke-width="20" :percentage="scope.row.percent"/>
               </template>
             </el-table-column>
-<<<<<<< HEAD
-            <!--<el-table-column
-              label="所属任务包">
-              <template slot-scope="scope">
-                <span>{{ scope.row.taskAttribution }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <el-button type="danger" @click="deleteFile(scope.row.id)">删除</el-button>
-              </template>
-            </el-table-column>-->
-=======
->>>>>>> dev-v7
           </el-table>
           <br>
           <el-button type="primary" @click="up.start()">开始上传</el-button>
@@ -85,15 +55,6 @@
 <script>
 export default {
   name: 'MultiFileUpload',
-<<<<<<< HEAD
-  props: {
-    tableData: Array,
-    up: Object,
-    isDisplay: Boolean,
-    isMinDisplay: Boolean
-  },
-=======
->>>>>>> dev-v7
   filters: {
     formatSize(size) {
       if (size > 1024 * 1024 * 1024 * 1024) {
@@ -108,11 +69,6 @@ export default {
       return size.toString() + ' B'
     }
   },
-<<<<<<< HEAD
-  data() {
-    return {
-      server_config: '',
-=======
   props: {
     tableData: Array,
     up: Object,
@@ -123,7 +79,6 @@ export default {
   data() {
     return {
       server_config: ''
->>>>>>> dev-v7
       // isDisplay: 'none',
       // isMinDisplay: 'none'
     }
@@ -135,18 +90,6 @@ export default {
     deleteFile(id) {
       const file = this.up.getFile(id)
       this.up.removeFile(file)
-<<<<<<< HEAD
-    },
-    minOrMax(status) {
-      if (status === 'min') {
-        this.isDisplay = false
-        this.isMinDisplay = true
-      } else {
-        this.isDisplay = true
-        this.isMinDisplay = false
-      }
-=======
->>>>>>> dev-v7
     }
   }
 }

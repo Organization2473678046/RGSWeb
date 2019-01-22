@@ -8,16 +8,11 @@
         <i class="el-icon-caret-bottom"/>
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
-<<<<<<< HEAD
-        <router-link class="inlineBlock" to="/">
-          <el-dropdown-item>
-=======
         <el-dropdown-item>
           <span style="display:block;">{{ this.$store.getters.name }}</span>
         </el-dropdown-item>
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item divided>
->>>>>>> dev-v7
             主页
           </el-dropdown-item>
         </router-link>

@@ -34,43 +34,6 @@ export default new Router({
 // 动态需要根据权限加载的路由表
 export const asyncRouterMap = [
   {
-<<<<<<< HEAD
-    path: '/taskpackageList',
-    component: Layout,
-    meta: { roles: ['user'] },
-    children: [
-      {
-        path: 'taskpackageList',
-        name: 'TaskpackageList',
-        component: () => import('@/views/TaskpackageList/index'),
-        meta: { title: '任务包列表', icon: 'table', roles: ['user'] }
-      }
-    ]
-  },
-  {
-    path: '/taskpackagePartition',
-    component: Layout,
-    meta: { roles: ['admin'] },
-    children: [{
-      path: 'taskpackagepartition',
-      name: 'Taskpackagepartition',
-      component: () => import('@/views/TaskpackagePartition/index'),
-      meta: { title: '任务包划分', icon: 'example', roles: ['admin'] }
-    }]
-  },
-  {
-    path: '/taskPackageStatistics',
-    component: Layout,
-    meta: { roles: ['user'] },
-    children: [{
-      path: 'taskPackageStatistics',
-      name: 'TaskPackageStatistics',
-      component: () => import('@/views/TaskPackageStatistics/index'),
-      meta: { title: '任务包统计', icon: 'chart', roles: ['user'] }
-    }]
-  },
-
-=======
     path: '/adminMgmt',
     component: Layout,
     redirect: '/adminMgmt/index',
@@ -102,6 +65,5 @@ export const asyncRouterMap = [
       }
     ]
   },
->>>>>>> dev-v7
   { path: '*', redirect: '/404', hidden: true }
 ]

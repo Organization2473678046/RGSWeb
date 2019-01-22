@@ -48,24 +48,14 @@ const user = {
           // 后台暂时返回"role": true。 包装成真实权限
           debugger
           const rdata = response.data
-<<<<<<< HEAD
-          const data = {}
-          const roles = []
-=======
           const data = {}, roles = []
->>>>>>> dev-v7
           if (rdata[0].isadmin === true) {
             roles.push('admin')
           } else {
             roles.push('user')
           }
           data.roles = roles
-<<<<<<< HEAD
-          // TODO 没有用户名信息
-          data.name = rdata[0].username
-=======
           data.name = rdata[0].reallyname
->>>>>>> dev-v7
           response.data = data
 
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组

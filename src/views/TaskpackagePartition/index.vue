@@ -163,7 +163,7 @@ export default {
           // features that intersect the box are added to the collection of
           // selected features
           var extent = dragBox.getGeometry().getExtent()
-          var url = featureServerUrl + '/' +layer + '/query/?f=json&' +
+          var url = featureServerUrl + '/' + layer + '/query/?f=json&' +
             'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
             encodeURIComponent(
               '{"xmin":' +
@@ -220,7 +220,7 @@ export default {
           }
         })
       }).catch(error => {
-        reject(error)
+        // reject(error)
       })
     },
     submitTaskpackage() {

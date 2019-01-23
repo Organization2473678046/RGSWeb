@@ -136,7 +136,7 @@
             }"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
-            :Browse="browse"
+            :browse="browse"
             browse_button="browse_button"
             @inputUploader="inputUploader"
           />
@@ -190,7 +190,7 @@
       <el-form ref="atFunForm" :model="atFunForm" :rules="atFunRules">
         <el-form-item label="指定" prop="owner" label-width="120px">
           <el-select v-model="atFunForm.owner" placeholder="请选择作业员" prop="owner" class="taskinfo-item" style="width: 140px">
-            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.username" :value="operator.username"/>
+            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.reallyname" :value="operator.username"/>
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="describe" label-width="120px">
@@ -263,7 +263,6 @@ import Uploader from '@/components/Upload/Uploader'
 export default {
   name: 'TaskpackageList',
   components: { Pagination, UploadDialogComponent, 'uploader': Uploader },
-  props: ['regionalName'],
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -288,6 +287,7 @@ export default {
       return parseTime(date, '{y}-{m}-{d} {h}:{i}')
     }
   },
+  props: ['regionalName'],
   data() {
     return {
       dataMGMTDialog: false, // 数据管理Dialog
@@ -358,7 +358,7 @@ export default {
       },
       handleProgressList: null,
       uploadPra: [], // 上传文件参数对象
-      upPraIndex: 0  // 上传文件参数下标
+      upPraIndex: 0 // 上传文件参数下标
     }
   },
   watch: {

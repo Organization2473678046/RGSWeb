@@ -8,7 +8,7 @@
       </div>
     </div>
     <div v-show="isMinDisplay" class="dialog-header">
-      <div class="header-progress" style="width: 0%; display: none;"></div>
+      <div class="header-progress" style="width: 0%; display: none;"/>
       <h3><span class="dialog-header-title"><em class="select-text">文件上传列表</em></span></h3>
       <div class="dialog-control">
         <span class="dialog-icon dialog-close icon icon-close" style="display: none;"><span class="sicon">×</span></span>

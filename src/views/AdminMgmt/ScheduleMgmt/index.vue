@@ -71,7 +71,7 @@ export default {
       scheduleList: {
         // id: undefined,
         schedule: '',
-        regiontask_name:''
+        regiontask_name: ''
       },
       total: 0,
       listQuery: {

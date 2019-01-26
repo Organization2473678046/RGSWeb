@@ -17,7 +17,9 @@
           </el-select>
         </el-form-item>
         <el-button :disabled="submitTPDisable" class="taskinfo-item" style="margin-left: 10px;" type="primary" icon="el-icon-menu" @click.native.prevent="submitTaskpackage">提交</el-button>
-        <el-tag type="warning" style="margin-left: 8%;">**按住Ctrl进行框选**</el-tag>
+        <el-button v-show="cancelSelectBtn" class="taskinfo-item" style="margin-left: 10px;" type="danger" @click="cancelSelection">取消框选</el-button>
+
+        <el-tag v-if="visits === 0" type="warning" style="margin-left: 8%;">**按住Ctrl进行框选**</el-tag>
       </el-form>
     </div>
     <div id="map" class="map"/>
@@ -60,7 +62,9 @@ export default {
         describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       operatorList: {},
-      checked3: true
+      checked3: true,
+      visits: this.$store.getters.visits,
+      cancelSelectBtn: false
     }
   },
   mounted() {
@@ -197,6 +201,8 @@ export default {
                   }).catch(() => { _this.loading = false })
 
                   _this.submitTPDisable = false
+
+                  _this.cancelSelectBtn = true
                 }
               }
             }
@@ -247,6 +253,9 @@ export default {
           return false
         }
       })
+    },
+    cancelSelection() {
+      alert("取消选择")
     }
   }
 }

@@ -136,7 +136,7 @@
             }"
             :before-upload="beforeUpload"
             :files-added="filesAdded"
-            :browse="browse"
+            :Browse="browse"
             browse_button="browse_button"
             @inputUploader="inputUploader"
           />
@@ -314,7 +314,7 @@ export default {
         page: 1,
         limit: 10,
         regiontask_name: '',
-        describe: '',
+        describe: null,
         ordering: null
       },
       subversionListQuery: {
@@ -356,9 +356,7 @@ export default {
       scheduleQuery: {
         regiontask_name: ''
       },
-      handleProgressList: null,
-      uploadPra: [], // 上传文件参数对象
-      upPraIndex: 0 // 上传文件参数下标
+      handleProgressList: null
     }
   },
   watch: {
@@ -413,28 +411,26 @@ export default {
       }
     },
     beforeUpload(up, file) {
-      up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'schedule': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName, 'file_md5': file.md5, 'regiontask_name': this.uploadPra[this.upPraIndex].regiontask_name })
-      this.upPraIndex++
+      up.setOption('multipart_params', { 'describe': file.remarks, 'schedule': file.handleProgress, 'taskpackage_file_id': file.taskpackageID, 'taskpackage_name': file.taskpackageName, 'file_md5': file.md5, 'regiontask_name': file.regionalName })
     },
     filesAdded(up, files) {
-      const upp = {}
-      upp.remarks = this.taskpackageForm.remarks
-      upp.hp = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
-      upp.taskID = this.taskpackageID
-      upp.tpName = this.dataMGMTTitle
-      upp.regiontask_name = this.regionalName
-      this.uploadPra.push(upp)
-
       this.dataMGMTDialog = false
       this.isDisplay = true
       this.isMinDisplay = false
 
       files.forEach((f) => {
         f.status = -1
+
         FileMd5(f.getNative(), (e, md5) => {
           f['md5'] = md5
           f.status = 1
         })
+
+        f['remarks'] = this.taskpackageForm.remarks
+        f['handleProgress'] = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
+        f['taskpackageID'] = this.taskpackageID
+        f['taskpackageName'] = this.dataMGMTTitle
+        f['regionalName'] = this.regionalName
       })
     },
     upDialogMinMax() {

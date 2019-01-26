@@ -48,7 +48,8 @@ const user = {
           // 后台暂时返回"role": true。 包装成真实权限
           debugger
           const rdata = response.data
-          const data = {}, roles = []
+          const data = {}
+          const roles = []
           if (rdata[0].isadmin === true) {
             roles.push('admin')
           } else {

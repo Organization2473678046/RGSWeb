@@ -74,11 +74,13 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+        :url="'http://192.168.3.111:8080/v8/regiontaskschunk/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
         :filters="{
           mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
         }"
+        chunk_size="2MB"
+        :max_retries="3"
         :files-added="filesAdded"
         :before-upload="beforeUpload"
         browse_button="browse_button"
@@ -279,7 +281,7 @@ export default {
       })
     },
     beforeUpload(up, file) {
-      up.setOption('multipart_params', { 'name': this.projectName, 'md5': file.md5 })
+      up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <el-input v-model="listQuery.describe" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
@@ -34,7 +34,7 @@
           <span>{{ scope.row.reallyname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="描述" align="center">
+      <el-table-column label="描述" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.describe }}</span>
         </template>
@@ -314,7 +314,7 @@ export default {
         page: 1,
         limit: 10,
         regiontask_name: '',
-        describe: null,
+        search: null,
         ordering: null
       },
       subversionListQuery: {

@@ -521,9 +521,9 @@ export default {
     },
     sortByID(order, prop) {
       if (order === 'ascending') {
-        this.listQuery.ordering = prop
+        this.listQuery.ordering = prop + ',id'
       } else {
-        this.listQuery.ordering = '-' + prop
+        this.listQuery.ordering = '-' + prop + ',id'
       }
       this.fetchData()
     },

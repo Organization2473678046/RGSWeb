@@ -29,19 +29,19 @@
           <span>{{ scope.row.status }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column label="项目描述">
+      <el-table-column label="项目描述">
         <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
+          <span>{{ scope.row.describe }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="160">
         <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
+          <span>{{ scope.row.createtime | formatDate }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleUpload(scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
+          <el-button type="primary" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
           <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button>
           <!--<el-button :disabled="scope.row.name !== null" size="mini" type="danger" @click="deleteData(scope.row.id)">删除</el-button>-->
         </template>
@@ -61,8 +61,8 @@
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="projectList.name" placeholder="请输入项目名称"/>
         </el-form-item>
-        <el-form-item label="项目描述" prop="remark">
-          <el-input :autosize="{ minRows: 2, maxRows: 4}" v-model="projectList.remark" type="textarea" placeholder="请输入项目描述"/>
+        <el-form-item label="项目描述" prop="describe">
+          <el-input :autosize="{ minRows: 2, maxRows: 4}" v-model="projectList.describe" type="textarea" placeholder="请输入项目描述"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -74,13 +74,12 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.111:8080/v8/regiontaskschunk/'"
+        :url="'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
+        :http_method="'PUT'"
         :filters="{
           mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
         }"
-        chunk_size="2MB"
-        :max_retries="3"
         :files-added="filesAdded"
         :before-upload="beforeUpload"
         browse_button="browse_button"
@@ -120,6 +119,7 @@
 import { getProjectRegional, createProjectRegional, updateProjectRegional, delProjectRegional } from '@/api/adminMgmt'
 import Pagination from '@/components/Pagination'
 import FileMd5 from '@/utils/file-md5'
+import { parseTime } from '@/utils'
 import Uploader from '@/components/Upload/Uploader'
 
 export default {
@@ -152,11 +152,11 @@ export default {
       projectList: {
         // id: undefined,
         name: '',
-        remark: ''
+        describe: ''
       },
       projectListRules: {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
-        remark: [{ required: true, message: '*必填*', trigger: 'blur' }]
+        describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       total: 0,
       listQuery: {
@@ -172,6 +172,7 @@ export default {
       files: [],
       up: {},
       tableData: [],
+      projectId: '',
       projectName: ''
     }
   },
@@ -259,8 +260,9 @@ export default {
         reject(error)
       })
     },
-    handleUpload(projectName) {
+    handleUpload(projectId, projectName) {
       this.dialogUpVisible = true
+      this.projectId = projectId
       this.projectName = projectName
     },
     inputUploader(up) {

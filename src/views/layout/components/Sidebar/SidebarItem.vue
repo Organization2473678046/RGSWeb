@@ -11,7 +11,7 @@
 
     <el-submenu v-else :index="resolvePath(item.path)">
       <template slot="title">
-        <item v-if="item.meta" @mouseover="enter()" :icon="item.meta.icon" :title="item.meta.title" />
+        <item v-if="item.meta" :icon="item.meta.icon" :title="item.meta.title" />
       </template>
 
       <template v-for="child in item.children" v-if="!child.hidden">
@@ -95,9 +95,6 @@ export default {
     },
     isExternalLink(routePath) {
       return isExternal(routePath)
-    },
-    enter(){
-      alert('aa')
     }
   }
 }

@@ -67,14 +67,20 @@ export default {
             this.$router.push({ path: '/' })
           }).catch((error) => {
             this.loading = false
+            debugger
             if (error.response === undefined) {
               this.$message({
                 message: '登录超时，请联系服务器管理员！！',
                 type: 'error'
               })
-            } else if ('non_field_errors' in error.response.data) {
+            } else if (error.response.status !== 404 && 'non_field_errors' in error.response.data) {
               this.$message({
                 message: '用户名或密码错误！！',
+                type: 'error'
+              })
+            } else {
+              this.$message({
+                message: '未知错误，请联系服务器管理员！！',
                 type: 'error'
               })
             }

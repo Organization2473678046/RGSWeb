@@ -91,6 +91,40 @@
             @click="atOperatorRecord(atRecListQuery, scope.row.id, scope.row.name)"/>
         </template>
       </el-table-column>
+
+      <!-- START c/s库管新加字段 -->
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="进度" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.schedule }}</span>
+        </template>
+      </el-table-column>
+      <!-- END c/s库管新加字段 -->
+
       <el-table-column align="center" prop="updatetime" sortable="custom" label="最后更新时间" width="160">
         <template slot-scope="scope">
           <i class="el-icon-time"/>

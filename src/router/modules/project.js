@@ -32,7 +32,8 @@ export function getRegionalMenu() {
                 name: 'Taskpackagepartition' + response.data[i].id,
                 component: () => import('@/views/TaskpackagePartition/index'),
                 props: (route) => ({ regionalName: response.data[i].name }),
-                meta: { title: '任务包划分', icon: 'example', roles: ['admin'] }
+                meta: { title: '任务包划分', icon: 'example', roles: ['admin'] },
+                hidden: true
               },
               {
                 path: 'taskPackageStatistics',

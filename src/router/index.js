@@ -43,17 +43,17 @@ export const asyncRouterMap = [
       icon: 'lock',
       roles: ['admin']
     },
-    // hidden: true,
+    hidden: true,
     children: [
-      // {
-      //   path: '/adminMgmt/userMgmt',
-      //   component: () => import('@/views/AdminMgmt/UserMgmt/index'),
-      //   name: 'UserMgmt',
-      //   meta: {
-      //     title: '用户管理',
-      //     roles: ['admin'] // or you can only set roles in sub nav
-      //   }
-      // },
+      {
+        path: '/adminMgmt/userMgmt',
+        component: () => import('@/views/AdminMgmt/UserMgmt/index'),
+        name: 'UserMgmt',
+        meta: {
+          title: '用户管理',
+          roles: ['admin'] // or you can only set roles in sub nav
+        }
+      },
       {
         path: '/adminMgmt/projectMgmt',
         component: () => import('@/views/AdminMgmt/ProjectMgmt/index'),

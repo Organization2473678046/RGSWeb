@@ -283,6 +283,8 @@ export default {
       })
     },
     beforeUpload(up, file) {
+      debugger
+      up.settings.url = 'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'
       up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }
   }

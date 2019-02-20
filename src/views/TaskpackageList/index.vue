@@ -490,6 +490,12 @@ export default {
               type: 'success'
             })
             this.fetchData()
+          }).catch(err => {
+            debugger
+            this.$message({
+              message: err.response.data.non_field_errors[0],
+              type: 'success'
+            })
           })
         } else {
           console.log('提交错误!!')

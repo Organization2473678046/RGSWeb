@@ -22,6 +22,30 @@ export const constantRouterMap = [
       component: () => import('@/views/home/index'),
       meta: { title: '主页', icon: 'tree', noCache: true }
     }]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/taskpackageList',
+    name: 'TaskpackageList',
+    children: [{
+      path: 'taskpackageList',
+      component: () => import('@/views/TaskpackageList/index'),
+      props: (route) => ({ regionalName: '东南区域1800幅' }),
+      meta: { title: '任务包列表', icon: 'table', noCache: true }
+    }]
+  },
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/taskPackageStatistics',
+    name: 'TaskPackageStatistics',
+    children: [{
+      path: 'taskPackageStatistics',
+      component: () => import('@/views/TaskPackageStatistics/index'),
+      props: (route) => ({ regionalName: '东南区域1800幅' }),
+      meta: { title: '任务包统计', icon: 'chart', noCache: true }
+    }]
   }
 ]
 

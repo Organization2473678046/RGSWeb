@@ -74,7 +74,7 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'"
+        :url="'http://192.168.3.120:8000/v8/regiontasks/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
         :http_method="'PUT'"
         :filters="{
@@ -283,7 +283,6 @@ export default {
       })
     },
     beforeUpload(up, file) {
-      debugger
       up.settings.url = 'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'
       up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }

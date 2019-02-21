@@ -130,6 +130,7 @@
           <uploader
             ref="uploader"
             :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+            :http_method="'POST'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
               mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
@@ -491,7 +492,6 @@ export default {
             })
             this.fetchData()
           }).catch(err => {
-            debugger
             this.$message({
               message: err.response.data.non_field_errors[0],
               type: 'success'

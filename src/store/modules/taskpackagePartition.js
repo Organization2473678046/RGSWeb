@@ -5,10 +5,12 @@ const taskpackage = {
     name: '',
     user: '',
     mapnum: '',
-    file: ''
+    visits: 0
   },
   mutations: {
-
+    SET_VISITS: (state, visits) => {
+      state.visits = visits
+    }
   },
   actions: {
     // 提交任务包
@@ -23,9 +25,10 @@ const taskpackage = {
       })
     },
 
-    GetOperator() {
+    GetOperator({ commit }) {
       return new Promise((resolve, reject) => {
         getOperator().then(response => {
+          commit('SET_VISITS', 1)
           resolve(response)
         }).catch(error => {
           reject(error)

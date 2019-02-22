@@ -66,23 +66,30 @@ export default {
       if (val === 'user') {
         return new Promise((resolve, reject) => {
           getChartTp(this.regionalName).then(response => {
-            let pcd = {}
-            const data = []
-            response.data.forEach((e) => {
-              pcd = {}
-              pcd.name = e.user_reallyname
-              pcd.value = e.count
-              data.push(pcd)
-            })
+            if(response.data.length !== 0){
+              let pcd = {}
+              const data = []
+              response.data.forEach((e) => {
+                pcd = {}
+                pcd.name = e.user_reallyname
+                pcd.value = e.count
+                data.push(pcd)
+              })
 
-            // 组成图例数据
-            data.forEach((e) => {
-              this.expectedData.push(e.name)
-            })
-            // 图表数据
-            this.actualData = data
-            this.value = val
-            this.PieChartData = { expectedData: this.expectedData, actualData: this.actualData }
+              // 组成图例数据
+              data.forEach((e) => {
+                this.expectedData.push(e.name)
+              })
+              // 图表数据
+              this.actualData = data
+              this.value = val
+              this.PieChartData = { expectedData: this.expectedData, actualData: this.actualData }
+            } else {
+              this.$message({
+                message: '暂无数据' ,
+                type: 'info'
+              })
+            }
           }).catch(error => {
             reject(error)
           })
@@ -91,21 +98,28 @@ export default {
       if (val === 'schedule') {
         return new Promise((resolve, reject) => {
           getChartTPSchedule(this.regionalName).then(response => {
-            let pcd = {}
-            const data = []
-            response.data.forEach((e) => {
-              pcd = {}
-              pcd.name = e.taskpackage_schedule
-              pcd.value = e.count
-              data.push(pcd)
-            })
+            if(response.data.length !== 0){
+              let pcd = {}
+              const data = []
+              response.data.forEach((e) => {
+                pcd = {}
+                pcd.name = e.taskpackage_schedule
+                pcd.value = e.count
+                data.push(pcd)
+              })
 
-            data.forEach((e) => {
-              this.expectedData.push(e.name)
-            })
-            this.actualData = data
-            this.value = val
-            this.PieChartData = { expectedData: this.expectedData, actualData: this.actualData }
+              data.forEach((e) => {
+                this.expectedData.push(e.name)
+              })
+              this.actualData = data
+              this.value = val
+              this.PieChartData = { expectedData: this.expectedData, actualData: this.actualData }
+            } else {
+              this.$message({
+                message: '暂无数据' ,
+                type: 'info'
+              })
+            }
           }).catch(error => {
             reject(error)
           })

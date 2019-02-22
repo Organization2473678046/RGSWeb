@@ -20,6 +20,9 @@ export default {
     headers: {
       type: Object
     },
+    http_method: {
+      type: String
+    },
     multipart_params: {
       type: Object
     },
@@ -266,6 +269,7 @@ export default {
         url: this.url,
         chunk_size: this.chunk_size,
         headers: this.headers,
+        http_method: this.http_method,
         multipart: this.multipart,
         max_retries: this.max_retries,
         multi_selection: this.multi_selection,

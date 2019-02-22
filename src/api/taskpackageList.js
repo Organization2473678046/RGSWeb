@@ -1,12 +1,6 @@
 import request from '@/utils/request'
 
 export function getTaskpackageList(params) {
-  // let url = ''
-  // if (params.ordering === 'ascending') {
-  //   url = '/taskpackages/?page=' + params.page + '&limit=' + params.limit + '&ordering=' + params.column + '&search=' + params.describe
-  // } else {
-  //   url = '/taskpackages/?page=' + params.page + '&limit=' + params.limit + '&ordering=-' + params.column + '&search=' + params.describe
-  // }
   return request({
     url: '/taskpackages/',
     method: 'get',
@@ -23,7 +17,6 @@ export function uploadTaskpackage(params) {
 }
 
 export function getTPSubversionList(params) {
-  // const url = '/taskpackagesons/?taskpackage_name=' + params.taskpackage_name + '&page=' + params.page + '&limit=' + params.limit
   return request({
     url: '/taskpackagesons/',
     method: 'get',
@@ -40,7 +33,6 @@ export function atOperator(params) {
 }
 
 export function atOperatorRecord(params) {
-  // const url = '/taskpackageowners/?taskpackage_name=' + params.taskpackage_name + '&page=' + params.page + '&limit=' + params.limit
   return request({
     url: '/taskpackageowners/',
     method: 'get',

@@ -14,26 +14,36 @@
       fit
       highlight-current-row
       style="width: 100%;">
-      <el-table-column label="序号" prop="id" sortable="custom" align="center" width="85">
+      <el-table-column label="序号" prop="id" sortable="custom" align="center" width="75">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目名称" min-width="80px">
+      <el-table-column label="项目名称">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目状态" min-width="80px">
+      <el-table-column label="项目状态">
         <template slot-scope="scope">
           <span>{{ scope.row.status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="项目描述">
         <template slot-scope="scope">
-          <el-button :disabled="scope.row.name !== null" type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button :disabled="scope.row.name !== null" size="mini" type="danger" @click="deleteData(scope.row.id)">删除
-          </el-button>
+          <span>{{ scope.row.describe }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="160">
+        <template slot-scope="scope">
+          <span>{{ scope.row.createtime | formatDate }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button type="primary" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
+          <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button>
+          <!--<el-button :disabled="scope.row.name !== null" size="mini" type="danger" @click="deleteData(scope.row.id)">删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -45,10 +55,14 @@
       :limit.sync="listQuery.limit"
       @pagination=""/>
 
+    <!-- 创建项目Dialog -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="projectList" :model="projectList" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="projectList" :model="projectList" :rules="projectListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
         <el-form-item label="项目名称" prop="name">
-          <el-input v-model="projectList.name"/>
+          <el-input v-model="projectList.name" placeholder="请输入项目名称"/>
+        </el-form-item>
+        <el-form-item label="项目描述" prop="describe">
+          <el-input :autosize="{ minRows: 2, maxRows: 4}" v-model="projectList.describe" type="textarea" placeholder="请输入项目描述"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -57,24 +71,92 @@
       </div>
     </el-dialog>
 
+    <!-- 上传项目Dialog -->
+    <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
+      <uploader
+        :url="'http://192.168.3.120:8000/v8/regiontasks/'"
+        :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
+        :http_method="'PUT'"
+        :filters="{
+          mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
+        }"
+        :files-added="filesAdded"
+        :before-upload="beforeUpload"
+        browse_button="browse_button"
+        @inputUploader="inputUploader"
+      />
+      <el-button id="browse_button" type="primary">选择文件</el-button>
+      <br>
+      <el-table :data="tableData" style="width: 100%; margin: 10px 10px;">
+        <el-table-column label="文件名">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="大小">
+          <template slot-scope="scope">
+            <span>{{ scope.row.size | formatSize }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status === -1">正在计算MD5</span>
+            <span v-if="scope.row.status === 1">MD5计算完成，准备上传</span>
+            <span v-if="scope.row.status === 4" style="color: brown">上传失败</span>
+            <span v-if="scope.row.status === 5 && scope.row.percent === 100" style="color: chartreuse">已上传</span>
+            <el-progress v-if="scope.row.status === 2" :text-inside="true" :stroke-width="20" :percentage="scope.row.percent"/>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br>
+      <el-button type="danger" @click="up.start()">开始上传</el-button>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { getProjectRegional, createProjectRegional, updateProjectRegional, delProjectRegional } from '@/api/adminMgmt'
 import Pagination from '@/components/Pagination'
+import FileMd5 from '@/utils/file-md5'
+import { parseTime } from '@/utils'
+import Uploader from '@/components/Upload/Uploader'
 
 export default {
   name: 'AdminMgmt',
-  components: { Pagination },
+  components: { Pagination, 'uploader': Uploader },
+  filters: {
+    formatDate(time) {
+      var date = new Date(time)
+      return parseTime(date, '{y}-{m}-{d} {h}:{i}')
+    },
+    formatSize(size) {
+      if (size > 1024 * 1024 * 1024 * 1024) {
+        return (size / 1024 / 1024 / 1024 / 1024).toFixed(2) + ' TB'
+      } else if (size > 1024 * 1024 * 1024) {
+        return (size / 1024 / 1024 / 1024).toFixed(2) + ' GB'
+      } else if (size > 1024 * 1024) {
+        return (size / 1024 / 1024).toFixed(2) + ' MB'
+      } else if (size > 1024) {
+        return (size / 1024).toFixed(2) + ' KB'
+      }
+      return size.toString() + ' B'
+    }
+  },
   data() {
     return {
       tableKey: 0,
       dialogFormVisible: false,
+      dialogUpVisible: false,
       dialogStatus: '',
       projectList: {
         // id: undefined,
-        name: ''
+        name: '',
+        describe: ''
+      },
+      projectListRules: {
+        name: [{ required: true, message: '*必填*', trigger: 'blur' }],
+        describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       total: 0,
       listQuery: {
@@ -86,7 +168,29 @@ export default {
         update: '修改项目',
         create: '创建项目'
       },
-      listLoading: false
+      listLoading: false,
+      files: [],
+      up: {},
+      tableData: [],
+      projectId: '',
+      projectName: ''
+    }
+  },
+  watch: {
+    files: {
+      handler() {
+        this.tableData = []
+        this.files.forEach((e) => {
+          this.tableData.push({
+            name: e.name,
+            size: e.size,
+            status: e.status,
+            id: e.id,
+            percent: e.percent
+          })
+        })
+      },
+      deep: true
     }
   },
   created() {
@@ -155,6 +259,32 @@ export default {
       }).catch(error => {
         reject(error)
       })
+    },
+    handleUpload(projectId, projectName) {
+      this.dialogUpVisible = true
+      this.projectId = projectId
+      this.projectName = projectName
+    },
+    inputUploader(up) {
+      this.up = up
+      this.files = up.files
+    },
+    filesAdded(up, files) {
+      if (up.files.length > 1) {
+        up.removeFile(up.files[0])
+      }
+
+      files.forEach((f) => {
+        f.status = -1
+        FileMd5(f.getNative(), (e, md5) => {
+          f['md5'] = md5
+          f.status = 1
+        })
+      })
+    },
+    beforeUpload(up, file) {
+      up.settings.url = 'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'
+      up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }
   }
 }

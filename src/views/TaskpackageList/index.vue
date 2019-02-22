@@ -2,7 +2,7 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <el-input v-model="listQuery.describe" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
@@ -34,7 +34,7 @@
           <span>{{ scope.row.reallyname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="描述" align="center">
+      <el-table-column label="描述" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.describe }}</span>
         </template>
@@ -130,6 +130,7 @@
           <uploader
             ref="uploader"
             :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+            :http_method="'POST'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
               mime_types : [ { title : 'Zip files', extensions : 'zip,rar' } ]
@@ -190,7 +191,7 @@
       <el-form ref="atFunForm" :model="atFunForm" :rules="atFunRules">
         <el-form-item label="指定" prop="owner" label-width="120px">
           <el-select v-model="atFunForm.owner" placeholder="请选择作业员" prop="owner" class="taskinfo-item" style="width: 140px">
-            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.username" :value="operator.username"/>
+            <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.reallyname" :value="operator.username"/>
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="describe" label-width="120px">
@@ -263,7 +264,6 @@ import Uploader from '@/components/Upload/Uploader'
 export default {
   name: 'TaskpackageList',
   components: { Pagination, UploadDialogComponent, 'uploader': Uploader },
-  props: ['regionalName'],
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -288,6 +288,7 @@ export default {
       return parseTime(date, '{y}-{m}-{d} {h}:{i}')
     }
   },
+  props: ['regionalName'],
   data() {
     return {
       dataMGMTDialog: false, // 数据管理Dialog
@@ -314,7 +315,7 @@ export default {
         page: 1,
         limit: 10,
         regiontask_name: '',
-        describe: '',
+        search: null,
         ordering: null
       },
       subversionListQuery: {
@@ -356,9 +357,7 @@ export default {
       scheduleQuery: {
         regiontask_name: ''
       },
-      handleProgressList: null,
-      uploadPra: [], // 上传文件参数对象
-      upPraIndex: 0  // 上传文件参数下标
+      handleProgressList: null
     }
   },
   watch: {
@@ -413,28 +412,26 @@ export default {
       }
     },
     beforeUpload(up, file) {
-      up.setOption('multipart_params', { 'describe': this.uploadPra[this.upPraIndex].remarks, 'schedule': this.uploadPra[this.upPraIndex].hp, 'taskpackage_file_id': this.uploadPra[this.upPraIndex].taskID, 'taskpackage_name': this.uploadPra[this.upPraIndex].tpName, 'file_md5': file.md5, 'regiontask_name': this.uploadPra[this.upPraIndex].regiontask_name })
-      this.upPraIndex++
+      up.setOption('multipart_params', { 'describe': file.remarks, 'schedule': file.handleProgress, 'taskpackage_file_id': file.taskpackageID, 'taskpackage_name': file.taskpackageName, 'file_md5': file.md5, 'regiontask_name': file.regionalName })
     },
     filesAdded(up, files) {
-      const upp = {}
-      upp.remarks = this.taskpackageForm.remarks
-      upp.hp = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
-      upp.taskID = this.taskpackageID
-      upp.tpName = this.dataMGMTTitle
-      upp.regiontask_name = this.regionalName
-      this.uploadPra.push(upp)
-
       this.dataMGMTDialog = false
       this.isDisplay = true
       this.isMinDisplay = false
 
       files.forEach((f) => {
         f.status = -1
+
         FileMd5(f.getNative(), (e, md5) => {
           f['md5'] = md5
           f.status = 1
         })
+
+        f['remarks'] = this.taskpackageForm.remarks
+        f['handleProgress'] = this.taskpackageForm.handleProgress === null ? '未指定状态' : this.taskpackageForm.handleProgress
+        f['taskpackageID'] = this.taskpackageID
+        f['taskpackageName'] = this.dataMGMTTitle
+        f['regionalName'] = this.regionalName
       })
     },
     upDialogMinMax() {
@@ -494,6 +491,11 @@ export default {
               type: 'success'
             })
             this.fetchData()
+          }).catch(err => {
+            this.$message({
+              message: err.response.data.non_field_errors[0],
+              type: 'success'
+            })
           })
         } else {
           console.log('提交错误!!')
@@ -525,9 +527,9 @@ export default {
     },
     sortByID(order, prop) {
       if (order === 'ascending') {
-        this.listQuery.ordering = prop
+        this.listQuery.ordering = prop + ',id'
       } else {
-        this.listQuery.ordering = '-' + prop
+        this.listQuery.ordering = '-' + prop + ',id'
       }
       this.fetchData()
     },

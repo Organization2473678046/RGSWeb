@@ -56,9 +56,9 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"/>
 
-    <!-- 创建项目Dialog -->
+    <!-- 创建&编辑项目Dialog -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="projectList" :model="projectList" :rules="projectListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+      <el-form ref="projectForm" :model="projectList" :rules="projectListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="projectList.name" placeholder="请输入项目名称"/>
         </el-form-item>
@@ -238,16 +238,20 @@ export default {
       })
     },
     createData() {
-      createProjectRegional(this.projectList).then(response => {
-        this.dialogFormVisible = false
-        this.$message({
-          message: '创建成功！',
-          type: 'success'
-        })
-        this.getList()
-        this.listLoading = false
-      }).catch(error => {
-        reject(error)
+      this.$refs.projectForm.validate(valid => {
+        if (valid) {
+          createProjectRegional(this.projectList).then(response => {
+            this.dialogFormVisible = false
+            this.$message({
+              message: '创建成功！',
+              type: 'success'
+            })
+            this.getList()
+            this.listLoading = false
+          }).catch(error => {
+            reject(error)
+          })
+        }
       })
     },
     handleUpdate(row) {

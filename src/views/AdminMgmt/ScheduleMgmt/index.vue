@@ -42,8 +42,8 @@
       @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="scheduleList" :model="scheduleList" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="进度名称" prop="name">
+      <el-form ref="scheduleForm" :model="scheduleList" :rules="scheduleListRules" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="进度名称" label-width="100px" prop="schedule">
           <el-input v-model="scheduleList.schedule"/>
         </el-form-item>
       </el-form>
@@ -73,6 +73,9 @@ export default {
         // id: undefined,
         schedule: '',
         regiontask_name: ''
+      },
+      scheduleListRules: {
+        schedule: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       scheduleTotal: 0,
       listQuery: {
@@ -134,17 +137,21 @@ export default {
       })
     },
     createData() {
-      this.scheduleList.regiontask_name = this.regionalName
-      createTPSchedule(this.scheduleList).then(response => {
-        this.dialogFormVisible = false
-        this.$message({
-          message: '添加成功！',
-          type: 'success'
-        })
-        this.getList()
-        this.listLoading = false
-      }).catch(error => {
-        reject(error)
+      this.$refs.scheduleForm.validate(valid => {
+        if (valid) {
+          this.scheduleList.regiontask_name = this.regionalName
+          createTPSchedule(this.scheduleList).then(response => {
+            this.dialogFormVisible = false
+            this.$message({
+              message: '添加成功！',
+              type: 'success'
+            })
+            this.getList()
+            this.listLoading = false
+          }).catch(error => {
+            reject(error)
+          })
+        }
       })
     },
     handleUpdate(row) {

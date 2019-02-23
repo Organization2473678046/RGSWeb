@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!--<el-input placeholder="搜索进度" style="width: 200px;" class="filter-item" />-->
-      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" >搜索</el-button>-->
+      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加进度</el-button>
     </div>
 
@@ -13,13 +13,14 @@
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
       style="width: 100%;">
       <el-table-column label="序号" prop="id" sortable="custom" align="center" width="85">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进度" min-width="80px">
+      <el-table-column label="进度" prop="schedule" sortable="custom" min-width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.schedule }}</span>
         </template>
@@ -34,11 +35,11 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
-      :total="total"
+      v-show="scheduleTotal>0"
+      :total="scheduleTotal"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination=""/>
+      @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="scheduleList" :model="scheduleList" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -73,10 +74,12 @@ export default {
         schedule: '',
         regiontask_name: ''
       },
-      total: 0,
+      scheduleTotal: 0,
       listQuery: {
         page: 1,
         limit: 10,
+        search: null,
+        ordering: null,
         regiontask_name: ''
       },
       list: null,
@@ -91,15 +94,37 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
+    getList(listQuery) {
+      debugger
+      if (listQuery !== undefined) {
+        this.listQuery.limit = listQuery.limit
+      }
       this.listQuery.regiontask_name = this.regionalName
       getTPSchedule(this.listQuery).then(response => {
         this.list = response.data
-        // this.total = response.data.count
+        this.scheduleTotal = 30
         this.listLoading = false
       }).catch(error => {
         reject(error)
       })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop !== '') {
+        this.sortByID(order, prop)
+      }
+    },
+    sortByID(order, prop) {
+      if (order === 'ascending') {
+        this.listQuery.ordering = prop + ',id'
+      } else {
+        this.listQuery.ordering = '-' + prop + ',id'
+      }
+      this.getList()
     },
     handleCreate() {
       this.dialogStatus = 'create'

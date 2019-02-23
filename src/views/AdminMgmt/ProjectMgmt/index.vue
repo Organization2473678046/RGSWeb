@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!--<el-input placeholder="搜索进度" style="width: 200px;" class="filter-item" />-->
-      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" >搜索</el-button>-->
+      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
     </div>
 
@@ -13,28 +13,29 @@
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
       style="width: 100%;">
       <el-table-column label="序号" prop="id" sortable="custom" align="center" width="75">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目名称">
+      <el-table-column prop="name" label="项目名称" sortable="custom">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目状态">
+      <el-table-column prop="status" label="项目状态" sortable="custom">
         <template slot-scope="scope">
           <span>{{ scope.row.status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目描述">
+      <el-table-column label="项目描述" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.describe }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="160">
+      <el-table-column prop="createtime" label="创建时间" width="160" sortable="custom">
         <template slot-scope="scope">
           <span>{{ scope.row.createtime | formatDate }}</span>
         </template>
@@ -49,11 +50,11 @@
     </el-table>
 
     <pagination
-      v-show="total>0"
-      :total="total"
+      v-show="projectTotal>0"
+      :total="projectTotal"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination=""/>
+      @pagination="getList"/>
 
     <!-- 创建项目Dialog -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
@@ -158,10 +159,12 @@ export default {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
         describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
-      total: 0,
+      projectTotal: 0,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        search: null,
+        ordering: null
       },
       list: null,
       textMap: {
@@ -197,14 +200,35 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
+    getList(listQuery) {
+      if (listQuery !== undefined) {
+        this.listQuery.limit = listQuery.limit
+      }
       getProjectRegional(this.listQuery).then(response => {
         this.list = response.data
-        // this.total = response.data.count
+        this.projectTotal = 30
         this.listLoading = false
       }).catch(error => {
         reject(error)
       })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop !== '') {
+        this.sortByID(order, prop)
+      }
+    },
+    sortByID(order, prop) {
+      if (order === 'ascending') {
+        this.listQuery.ordering = prop + ',id'
+      } else {
+        this.listQuery.ordering = '-' + prop + ',id'
+      }
+      this.getList()
     },
     handleCreate() {
       this.dialogStatus = 'create'

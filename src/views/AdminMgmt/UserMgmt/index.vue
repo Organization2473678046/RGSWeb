@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.search" placeholder="搜索用户" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加用户</el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建用户</el-button>
     </div>
 
     <el-table
@@ -127,8 +127,8 @@ export default {
         this.listQuery.limit = listQuery.limit
       }
       getUser(this.listQuery).then(response => {
-        this.userData = response.data
-        this.userTotal = 20
+        this.userData = response.data.results
+        this.userTotal = response.data.count
 
         this.listLoading = false
       })

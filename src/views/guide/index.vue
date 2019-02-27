@@ -1,12 +1,5 @@
 <template>
-  <div class="app-container">
-    <p class="warn-content">
-      2
-      <a href="https://github.com/kamranahmedse/driver.js" target="_blank">driver.js.
-      </a>
-    </p>
-    <el-button icon="el-icon-question" type="primary" @click.prevent.stop="guide">1</el-button>
-  </div>
+  <el-button icon="el-icon-question" type="primary" @click.prevent.stop="guide">帮助</el-button>
 </template>
 
 <script>

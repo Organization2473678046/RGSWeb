@@ -1,49 +1,9 @@
 const steps = [
   {
-    element: '.hamburger-container',
+    element: '.taskinfo-container',
     popover: {
-      title: 'Hamburger',
-      description: 'Open && Close sidebar',
-      position: 'bottom'
-    }
-  },
-  {
-    element: '.breadcrumb-container',
-    popover: {
-      title: 'Breadcrumb',
-      description: 'Indicate the current page location',
-      position: 'bottom'
-    }
-  },
-  {
-    element: '.screenfull',
-    popover: {
-      title: 'Screenfull',
-      description: 'Bring the page into fullscreen',
-      position: 'left'
-    }
-  },
-  {
-    element: '.international-icon',
-    popover: {
-      title: 'Switch language',
-      description: 'Switch the system language',
-      position: 'left'
-    }
-  },
-  {
-    element: '.theme-switch',
-    popover: {
-      title: 'Theme Switch',
-      description: 'Custom switch system theme',
-      position: 'left'
-    }
-  },
-  {
-    element: '.tags-view-container',
-    popover: {
-      title: 'Tags view',
-      description: 'The history of the page you visited',
+      title: '任务包划分',
+      description: '请放大到需要选择的区域按住Ctrl键进行框选，框选后输入信息进行提交',
       position: 'bottom'
     }
   }

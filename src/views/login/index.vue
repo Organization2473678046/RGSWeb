@@ -67,7 +67,6 @@ export default {
             this.$router.push({ path: '/' })
           }).catch((error) => {
             this.loading = false
-            debugger
             if (error.response === undefined) {
               this.$message({
                 message: '登录超时，请联系服务器管理员！！',

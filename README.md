@@ -14,3 +14,8 @@ npm run build --report
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Update version note
+modify config/prod.env.js vx
+modify views/AdminMgmt/ProjectMgmt upload url **double**
+modify views/TaskpackageList upload url

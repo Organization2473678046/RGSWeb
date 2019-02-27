@@ -17,9 +17,10 @@
           </el-select>
         </el-form-item>
         <el-button :disabled="submitTPDisable" class="taskinfo-item" style="margin-left: 10px;" type="primary" icon="el-icon-menu" @click.native.prevent="submitTaskpackage">提交</el-button>
-        <el-button v-show="cancelSelectBtn" class="taskinfo-item" style="margin-left: 10px;" type="danger" @click="cancelSelection">取消框选</el-button>
+        <!-- <el-button v-show="cancelSelectBtn" class="taskinfo-item" style="margin-left: 10px;" type="danger" @click="cancelSelection">取消框选</el-button> -->
 
-        <el-tag v-if="visits === 0" type="warning" style="margin-left: 8%;">**按住Ctrl进行框选**</el-tag>
+        <guide class="guide-help" v-if="visits === 0"/>
+        <!-- <el-tag v-if="visits === 0" type="warning" style="margin-left: 8%;">**按住Ctrl进行框选**</el-tag> -->
       </el-form>
     </div>
     <div id="map" class="map"/>
@@ -40,10 +41,12 @@ import { TileArcGISRest } from 'ol/source.js'
 import 'ol-layerswitcher/src/ol-layerswitcher.css'
 import LayerSwitcher from 'ol-layerswitcher/src/ol-layerswitcher'
 import { getMapServices } from '@/api/taskpackagePartition'
+import guide from '@/views/guide/index'
 
 export default {
   name: 'TaskpackagePartition',
   props: ['regionalName'],
+  components: { guide },
   data() {
     return {
       submitTPDisable: true,
@@ -77,13 +80,13 @@ export default {
       getMapServices(this.regionalName).then(response => {
         const _this = this
 
-        const dituMapServerUrl = response.data[0].basemapservice
+        const dituMapServerUrl = response.data.results[0].basemapservice
 
-        const mmanageMapServerUrl = response.data[0].mapindexmapservice
+        const mmanageMapServerUrl = response.data.results[0].mapindexmapservice
 
-        const featureServerUrl = response.data[0].mapindexfeatureservice
+        const featureServerUrl = response.data.results[0].mapindexfeatureservice
 
-        const scheduleServerUrl = response.data[0].mapindexschedulemapservice
+        const scheduleServerUrl = response.data.results[0].mapindexschedulemapservice
 
         const layer = '0'
 

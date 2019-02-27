@@ -129,7 +129,7 @@
             :max_retries="3"/>-->
           <uploader
             ref="uploader"
-            :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+            :url="'http://192.168.3.120:8000/v9/taskpackagesons/'"
             :http_method="'POST'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
@@ -537,7 +537,7 @@ export default {
       // 拉取进度列表
       this.scheduleQuery.regiontask_name = this.regionalName
       getTPSchedule(this.scheduleQuery).then(response => {
-        this.handleProgressList = response.data
+        this.handleProgressList = response.data.results
         this.listLoading = false
       }).catch(error => {
       })

@@ -98,14 +98,13 @@ export default {
   },
   methods: {
     getList(listQuery) {
-      debugger
       if (listQuery !== undefined) {
         this.listQuery.limit = listQuery.limit
       }
       this.listQuery.regiontask_name = this.regionalName
       getTPSchedule(this.listQuery).then(response => {
-        this.list = response.data
-        this.scheduleTotal = 30
+        this.list = response.data.results
+        this.scheduleTotal = response.data.count
         this.listLoading = false
       }).catch(error => {
         reject(error)
@@ -149,6 +148,10 @@ export default {
             this.getList()
             this.listLoading = false
           }).catch(error => {
+            this.$message({
+              message: error.response.data.non_field_errors[0],
+              type: 'warning'
+            })
             reject(error)
           })
         }

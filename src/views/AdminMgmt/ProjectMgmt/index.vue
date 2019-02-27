@@ -42,8 +42,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
-          <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button type="primary" :disabled="scope.row.status === '处理完成'" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
+          <!-- <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button> -->
           <!--<el-button :disabled="scope.row.name !== null" size="mini" type="danger" @click="deleteData(scope.row.id)">删除</el-button>-->
         </template>
       </el-table-column>
@@ -75,7 +75,7 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.120:8000/v8/regiontasks/'"
+        :url="'http://192.168.3.120:8000/v9/regiontasks/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
         :http_method="'PUT'"
         :filters="{
@@ -205,8 +205,8 @@ export default {
         this.listQuery.limit = listQuery.limit
       }
       getProjectRegional(this.listQuery).then(response => {
-        this.list = response.data
-        this.projectTotal = 30
+        this.list = response.data.results
+        this.projectTotal = response.data.count
         this.listLoading = false
       }).catch(error => {
         reject(error)
@@ -311,7 +311,7 @@ export default {
       })
     },
     beforeUpload(up, file) {
-      up.settings.url = 'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'
+      up.settings.url = 'http://192.168.3.120:8000/v9/regiontasks/' + this.projectId + '/'
       up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }
   }

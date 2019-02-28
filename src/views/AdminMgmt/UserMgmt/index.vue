@@ -25,7 +25,7 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="管理员" width="110px" align="center">
+      <el-table-column label="" width="110px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.status }}</span>
         </template>
@@ -72,6 +72,16 @@
         <el-form-item label="真实姓名" prop="trueName">
           <el-input v-model="userList.trueName" placeholder="请输入真实姓名"/>
         </el-form-item>
+        <el-form-item label="指定角色" prop="trueName">
+          <el-select v-model="userList.role" multiple placeholder="指定角色">
+            <el-option
+              v-for="item in userData"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
@@ -98,7 +108,8 @@ export default {
       userData: null,
       userList: {
         name: '',
-        trueName: ''
+        trueName: '',
+        role: ''
       },
       userListRules: {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
@@ -115,7 +126,8 @@ export default {
         limit: 10,
         search: null,
         ordering: null
-      }
+      },
+      roleList: []
     }
   },
   created() {

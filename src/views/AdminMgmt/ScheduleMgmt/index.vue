@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加进度</el-button>
+      <el-button class="filter-item" id="addSchedule" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">添加进度</el-button>
     </div>
 
     <el-table
@@ -27,8 +27,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button size="mini" type="danger" @click="deleteData(scope.row.id)">删除
+          <!-- :id="'schedule' + scope.row.id" By cypress测试 -->
+          <el-button type="primary" :id="'scheduleEdit' + scope.row.id" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button size="mini" :id="'scheduleDel' + scope.row.id" type="danger" @click="deleteData(scope.row.id)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -175,6 +176,10 @@ export default {
         this.getList()
         this.listLoading = false
       }).catch(error => {
+        this.$message({
+          message: error.response.data.non_field_errors[0],
+          type: 'warning'
+        })
         reject(error)
       })
     },

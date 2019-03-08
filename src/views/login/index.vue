@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
+    <div class="title"></div>
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">全生命周期生产管理系统</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -130,21 +130,28 @@ $light_gray:#eee;
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 $bg:#2d3a4b;
+$bgimg: url(../../assets/images/loginBackground.png);
 $dark_gray:#889aa4;
 $light_gray:#eee;
 .login-container {
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: $bg;
+  // background-color: $bg;
+  background-image: $bgimg;
+  background-repeat:no-repeat;
+  background-size:100%;
   .login-form {
     position: absolute;
+    background-image: url(../../assets/images/Bottomframe.png);
+    background-repeat:no-repeat;
+    background-size:100%;
     left: 0;
     right: 0;
     width: 520px;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
-    margin: 120px auto;
+    margin: 230px auto;
   }
   .svg-container {
     padding: 6px 5px 6px 15px;
@@ -154,12 +161,16 @@ $light_gray:#eee;
     display: inline-block;
   }
   .title {
-    font-size: 26px;
-    font-weight: 400;
-    color: $light_gray;
-    margin: 0px auto 40px auto;
-    text-align: center;
-    font-weight: bold;
+    background-image: url(../../assets/images/title.png);
+    position: absolute;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    left: 0;
+    right: 0;
+    width: 520px;
+    max-width: 100%;
+    padding: 55px 35px 25px 35px;
+    margin: 120px auto;
   }
 }
 </style>

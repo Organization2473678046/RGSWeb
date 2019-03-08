@@ -3,7 +3,8 @@
     <div class="filter-container">
       <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
+      <el-button class="filter-item" id="createProject" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
+    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="dialogFileTreeVisible = true">帮助</el-button>
     </div>
 
     <el-table
@@ -22,7 +23,10 @@
       </el-table-column>
       <el-table-column prop="name" label="项目名称" sortable="custom">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <!-- <span>{{ scope.row.name }}</span> -->
+          <router-link :to="'/project' + scope.row.id + '/taskpackageList'" class="link-type">
+            <span>{{ scope.row.name }}</span>
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="项目状态" sortable="custom">
@@ -113,6 +117,28 @@
       <el-button type="danger" @click="up.start()">开始上传</el-button>
     </el-dialog>
 
+
+    <!-- 展示上传GDB文件目录结构Dialog -->
+    <el-dialog title="帮助" :visible.sync="dialogFileTreeVisible">
+
+      <div class="custom-tree-container">
+        <div class="block">
+          <h2>上传GDB文件目录结构</h2>
+          <el-tree
+            :data="fileTreeData"
+            default-expand-all
+            :expand-on-click-node="false"
+            indent="22">
+            <span class="custom-tree-node" slot-scope="{ node, treeData }">
+              <span><i class="node-icon" :class="node.icon"></i>{{ node.label }}</span>
+            </span>
+          </el-tree>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFileTreeVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -145,10 +171,28 @@ export default {
     }
   },
   data() {
+    const treeData = [{
+      label: 'GDB压缩包文件',
+        icon: "el-icon-tickets",
+        children: [{
+          icon: "el-icon-tickets",
+          label: 'source',
+          children: [{}]
+        },
+        {
+          icon: "el-icon-tickets",
+          label: 'temp'
+        },
+        {
+          icon: "el-icon-tickets",
+          label: 'xxxx.xml'
+        }]     
+    }];
     return {
       tableKey: 0,
       dialogFormVisible: false,
       dialogUpVisible: false,
+      dialogFileTreeVisible: false,
       dialogStatus: '',
       projectList: {
         // id: undefined,
@@ -176,7 +220,8 @@ export default {
       up: {},
       tableData: [],
       projectId: '',
-      projectName: ''
+      projectName: '',
+      fileTreeData: JSON.parse(JSON.stringify(treeData))
     }
   },
   watch: {
@@ -317,3 +362,20 @@ export default {
   }
 }
 </script>
+
+<style>
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
+
+  h2{text-align:center;}
+
+  .node-icon {
+    margin-right: 5%;
+  }
+</style>

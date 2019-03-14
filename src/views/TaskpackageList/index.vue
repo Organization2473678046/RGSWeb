@@ -41,7 +41,8 @@
       </el-table-column>
       <el-table-column label="进度" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.schedule }}</span>
+          <span class="link-type" @click="taskTimeOutInfo(scope.row.id)">{{ scope.row.schedule }}</span>
+          <el-tag v-if="scope.row.isoverdue === true" type="danger">超期</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="裁切状态" width="100" align="center">
@@ -199,6 +200,26 @@
         <el-form-item label="描述" prop="describe" label-width="120px">
           <el-input v-model="atFunForm.describe" placeholder="请输入描述" />
         </el-form-item>
+        <el-form-item label="任务开始时间" prop="starttime" label-width="120px">
+          <div class="block">
+            <el-date-picker
+              v-model="atFunForm.starttime"
+              type="datetime"
+              @change="startTimeFormat"
+              placeholder="任务开始时间">
+            </el-date-picker>
+          </div>
+        </el-form-item>
+        <el-form-item label="任务结束时间" prop="endtime" label-width="120px">
+          <div class="block">
+            <el-date-picker
+              v-model="atFunForm.endtime"
+              type="datetime"
+              @change="endTimeFormat"
+              placeholder="任务结束时间">
+            </el-date-picker>
+          </div>
+        </el-form-item>   
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogAtFunVisible = false">取 消</el-button>
@@ -234,6 +255,16 @@
             {{ scope.row.createtime | formatDate }}
           </template>
         </el-table-column>
+        <el-table-column label="任务开始时间" width="150">
+          <template slot-scope="scope">
+            {{ scope.row.starttime | formatDate }}
+          </template>
+        </el-table-column>
+        <el-table-column label="任务结束时间" width="150">
+          <template slot-scope="scope">
+            {{ scope.row.endtime | formatDate }}
+          </template>
+        </el-table-column>
       </el-table>
       <pagination
         v-show="atRecTotal>0"
@@ -250,11 +281,28 @@
       :up-dialog-min-max="upDialogMinMax"
       :is-min-display="isMinDisplay"
       :up="up"/>
+
+    <!-- 任务超期时间线 -->
+    <el-dialog
+      title="任务完成进度详情"
+      :visible.sync="taskScheduleDialog"
+      width="30%"
+      center>
+      <el-timeline>
+        <el-timeline-item >{{ this.taskTimeOutList.isoverdue==true?'已超期':'已完成' }}</el-timeline-item>
+        <el-timeline-item :timestamp="this.taskTimeOutList.endtime">任务结束时间</el-timeline-item>
+        <el-timeline-item :timestamp="this.taskTimeOutList.starttime">任务开始时间</el-timeline-item>
+        <el-timeline-item :timestamp="this.taskTimeOutList.createtime">任务创建时间</el-timeline-item>
+      </el-timeline>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="taskScheduleDialog = false">关 闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getTaskpackageList, getTPSubversionList, atOperator, atOperatorRecord } from '@/api/taskpackageList'
+import { getTaskpackageList, getTPSubversionList, atOperator, atOperatorRecord, taskTimeOutTimeline } from '@/api/taskpackageList'
 import { getTPSchedule } from '@/api/adminMgmt'
 import UploadDialogComponent from '@/components/Upload/uploadDialog.vue'
 import Pagination from '@/components/Pagination'
@@ -295,6 +343,7 @@ export default {
     return {
       dataMGMTDialog: false, // 数据管理Dialog
       dataMGMTTitle: null, // 数据管理Dialog标题
+      taskScheduleDialog: false,
       taskpackageID: null,
       taskpackageList: null,
       tpSubversionList: null,
@@ -345,11 +394,15 @@ export default {
         owner: '',
         describe: '',
         taskpackage_name: '',
-        regiontask_name: ''
+        regiontask_name: '',
+        starttime: '',
+        endtime: ''
       },
       atFunRules: {
         operator: [{ required: true, message: '*必填*', trigger: 'blur' }],
-        describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
+        describe: [{ required: true, message: '*必填*', trigger: 'blur' }],
+        starttime: [{ required: true, message: '*必填*', trigger: 'blur' }],
+        endtime: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       listSearch: {
         page: 1,
@@ -359,7 +412,11 @@ export default {
       scheduleQuery: {
         regiontask_name: ''
       },
-      handleProgressList: null
+      handleProgressList: null,
+      taskTimeOutList: {
+        id: '',
+        createtime: ''
+      }
     }
   },
   watch: {
@@ -544,6 +601,23 @@ export default {
         this.handleProgressList = response.data.results
         this.listLoading = false
       }).catch(error => {
+      })
+    },
+    startTimeFormat(time) {
+      var date = new Date(time)
+      this.atFunForm.starttime = parseTime(date, '{y}-{m}-{d} {h}:{i}')
+    },
+    endTimeFormat(time) {
+      var date = new Date(time)
+      this.atFunForm.endtime = parseTime(date, '{y}-{m}-{d} {h}:{i}')
+    },
+    taskTimeOutInfo(id){
+      this.taskScheduleDialog = true
+      let params = {}
+      params.id = id
+      params.regiontask_name = this.regionalName
+      taskTimeOutTimeline(params).then(response => {
+        this.taskTimeOutList = response.data[0]
       })
     }
   }

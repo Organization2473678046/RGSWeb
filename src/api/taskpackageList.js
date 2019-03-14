@@ -39,3 +39,19 @@ export function atOperatorRecord(params) {
     params
   })
 }
+
+export function taskTimeOutRemind(params) {
+  return request({
+    url: '/overdue_worker/',
+    method: 'get',
+    params
+  })
+}
+
+export function taskTimeOutTimeline(params) {
+  return request({
+    url: '/overdue_admin/',
+    method: 'get',
+    params
+  })
+}

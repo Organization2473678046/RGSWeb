@@ -1,13 +1,15 @@
 import request from '@/utils/request'
 
-export function submitTaskpackage(name, describe, owner, mapnums, mapnumcounts, regiontask_name) {
+export function submitTaskpackage(name, describe, owner, mapnums, mapnumcounts, regiontask_name, starttime, endtime) {
   const data = {
     name,
     describe,
     owner,
     mapnums,
     mapnumcounts,
-    regiontask_name
+    regiontask_name,
+    starttime,
+    endtime
   }
   return request({
     url: '/taskpackages/',

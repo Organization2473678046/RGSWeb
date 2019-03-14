@@ -16,24 +16,22 @@
             <el-option v-for="operator in operatorList" :key="operator.id" :label="operator.reallyname" :value="operator.username"/>
           </el-select>
         </el-form-item>
-        <el-form-item prop="starttime">
+        <el-form-item prop="startDate">
           <div class="block">
             <el-date-picker
               :disabled="submitTPDisable"
-              v-model="taskpackageForm.starttime"
-              @change="startTimeFormat"
+              v-model="taskpackageForm.startDate"
               type="datetime"
               placeholder="任务开始时间">
             </el-date-picker>
           </div>
         </el-form-item>
-        <el-form-item prop="endtime">
+        <el-form-item prop="endDate">
           <div class="block">
             <el-date-picker
               :disabled="submitTPDisable"
-              v-model="taskpackageForm.endtime"
+              v-model="taskpackageForm.endDate"
               type="datetime"
-              @change="endTimeFormat"
               placeholder="任务结束时间">
             </el-date-picker>
           </div>
@@ -56,7 +54,6 @@ import View from 'ol/View.js'
 import { platformModifierKeyOnly } from 'ol/events/condition.js'
 import EsriJSON from 'ol/format/EsriJSON.js'
 import { DragBox, Select } from 'ol/interaction.js'
-import {defaults as defaultControls, FullScreen} from 'ol/control.js';
 import { Tile as TileLayer, Vector as VectorLayer, Group } from 'ol/layer.js'
 import { fromLonLat } from 'ol/proj.js'
 import VectorSource from 'ol/source/Vector.js'
@@ -65,7 +62,6 @@ import 'ol-layerswitcher/src/ol-layerswitcher.css'
 import LayerSwitcher from 'ol-layerswitcher/src/ol-layerswitcher'
 import { getMapServices } from '@/api/taskpackagePartition'
 import guide from '@/views/guide/index'
-import { parseTime } from '@/utils'
 
 export default {
   name: 'TaskpackagePartition',
@@ -82,15 +78,13 @@ export default {
         mapnums: '',
         mapnumcounts: '',
         regiontask_name: '',
-        starttime: '',
-        endtime: ''
+        startDate: '',
+        endDate: ''
       },
       taskpackageRules: {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
         owner: [{ required: true, message: '*必填*', trigger: 'blur' }],
-        describe: [{ required: true, message: '*必填*', trigger: 'blur' }],
-        starttime: [{ required: true, message: '*必填*', trigger: 'blur' }],
-        endtime: [{ required: true, message: '*必填*', trigger: 'blur' }]
+        describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
       operatorList: {},
       checked3: true,
@@ -166,9 +160,6 @@ export default {
         ]
 
         const map = new Map({
-          controls: defaultControls().extend([
-            new FullScreen()
-          ]),
           layers: layers,
           target: document.getElementById('map'),
           view: new View({
@@ -287,14 +278,6 @@ export default {
           return false
         }
       })
-    },
-    startTimeFormat(time) {
-      var date = new Date(time)
-      this.taskpackageForm.starttime = parseTime(date, '{y}-{m}-{d} {h}:{i}')
-    },
-    endTimeFormat(time) {
-      var date = new Date(time)
-      this.taskpackageForm.endtime = parseTime(date, '{y}-{m}-{d} {h}:{i}')
     },
     cancelSelection() {
       alert("取消选择")

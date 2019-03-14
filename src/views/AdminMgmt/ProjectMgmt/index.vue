@@ -4,7 +4,7 @@
       <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" id="createProject" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
-    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="dialogFileTreeVisible = true">帮助</el-button>
+    <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="dialogFileTreeVisible = true">帮助</el-button> -->
     </div>
 
     <el-table

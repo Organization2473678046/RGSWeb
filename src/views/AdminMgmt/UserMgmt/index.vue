@@ -20,37 +20,32 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" prop="name" sortable="custom" min-width="80px">
+      <el-table-column label="用户名" prop="name" sortable="custom" >
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <span>{{ scope.row.reallyname }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" width="110px" align="center">
+      <el-table-column label="登录账号" prop="name" sortable="custom" >
         <template slot-scope="scope">
-          <span>{{ scope.row.status }}</span>
+          <span>{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column label="备用" width="110px" align="center">
+      <el-table-column label="角色" prop="name" sortable="custom" >
         <template slot-scope="scope">
-          <span>{{ scope.row.by1 }}</span>
+          <span>{{ scope.row.isadmin==true?'管理员':'作业员' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备用" width="80px">
+      <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.by2 }}</span>
+          <span>{{ scope.row.date_joined }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备用" align="center" width="95">
-        <template slot-scope="scope">
-          <span>{{ scope.row.by3 }}</span>
-        </template>
-      </el-table-column>-->
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button size="mini" @click="handleModifyStatus(scope.row,'draft')">重置密码
+          <el-button type="primary" :disabled="true" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button size="mini" @click="modifyPassword(scope.row.id)">重置密码
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">删除
+          <el-button size="mini" :disabled="true" type="danger" @click="handleDelete(scope.row.id)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -66,19 +61,19 @@
     <!-- 创建&编辑用户Dialog -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="userForm" :model="userList" :rules="userListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="用户名称" prop="name">
-          <el-input v-model="userList.name" placeholder="请输入用户名称"/>
+        <el-form-item label="登录名称" prop="username">
+          <el-input v-model="userList.username" placeholder="用户登录账户名"/>
         </el-form-item>
-        <el-form-item label="真实姓名" prop="trueName">
-          <el-input v-model="userList.trueName" placeholder="请输入真实姓名"/>
+        <el-form-item label="真实姓名" prop="reallyname">
+          <el-input v-model="userList.reallyname" placeholder="请输入真实姓名"/>
         </el-form-item>
-        <el-form-item label="指定角色" prop="trueName">
-          <el-select v-model="userList.role" multiple placeholder="指定角色">
+        <el-form-item label="指定角色" prop="isadmin">
+          <el-select v-model="userList.isadmin" placeholder="指定角色">
             <el-option
-              v-for="item in userData"
-              :key="item.name"
+              v-for="item in userRole"
+              :key="item.id"
               :label="item.name"
-              :value="item.name">
+              :value="item.val">
             </el-option>
           </el-select>
         </el-form-item>
@@ -107,10 +102,21 @@ export default {
       dialogStatus: '',
       userData: null,
       userList: {
-        name: '',
-        trueName: '',
-        role: ''
+        username: '',
+        reallyname: '',
+        password: 'password',
+        isadmin: ''
       },
+      userRole: [{
+        id: 1,
+        name: '管理员',
+        val: true
+      },{
+        id: 2,
+        name: '作业员',
+        val: false
+      }
+      ],
       userListRules: {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
         trueName: [{ required: true, message: '*必填*', trigger: 'blur' }]
@@ -224,7 +230,7 @@ export default {
         reject(error)
       })
     },
-    modifyPassword() {
+    modifyPassword(id) {
       resetPassword(id).then(response => {
         this.$message({
           message: '重置密码成功！',

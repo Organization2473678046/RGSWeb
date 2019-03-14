@@ -79,7 +79,7 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.120:8000/v9/regiontasks/'"
+        :url="'http://192.168.3.120:8000/v0.10/regiontasks/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
         :http_method="'PUT'"
         :filters="{

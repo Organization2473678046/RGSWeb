@@ -132,7 +132,7 @@
             :max_retries="3"/>-->
           <uploader
             ref="uploader"
-            :url="'http://192.168.3.120:8000/v9/taskpackagesons/'"
+            :url="'http://192.168.3.120:8000/v0.10/taskpackagesons/'"
             :http_method="'POST'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{

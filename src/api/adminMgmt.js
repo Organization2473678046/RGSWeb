@@ -80,7 +80,7 @@ export function delProjectRegional(params) {
 // 用户管理 CURD START
 export function getUser(params) {
   return request({
-    url: '/regiontasks/',
+    url: '/usermanage/',
     method: 'get',
     params
   })
@@ -88,7 +88,7 @@ export function getUser(params) {
 
 export function createUser(params) {
   return request({
-    url: '/regiontasks/',
+    url: '/users/',
     method: 'post',
     data: params
   })
@@ -96,25 +96,27 @@ export function createUser(params) {
 
 export function editUser(params) {
   return request({
-    url: '/regiontasks/' + params.id + '/',
+    url: '/usermanage/' + params.id + '/',
     method: 'put',
     data: {
-      schedule: params.schedule
+      username: params.username,
+      reallyname: params.reallyname,
+      isadmin: params.isadmin
     }
   })
 }
 
 export function delUser(params) {
   return request({
-    url: '/regiontasks/' + params + '/',
+    url: '/users/' + params + '/',
     method: 'DELETE'
   })
 }
 
-export function resetPassword(params) {
+export function resetPassword(id) {
   return request({
-    url: '/regiontasks/' + params.id + '/',
-    method: 'put'
+    url: '/user/' + id + '/',
+    method: 'get'
   })
 }
 // 用户管理 CURD END

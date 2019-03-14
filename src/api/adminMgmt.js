@@ -43,10 +43,11 @@ export function delTPSchedule(params) {
 // 进度管理 CURD END
 
 // 项目管理 CURD START
-export function getProjectRegional() {
+export function getProjectRegional(params) {
   return request({
     url: '/regiontasks/',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -75,3 +76,45 @@ export function delProjectRegional(params) {
   })
 }
 // 项目管理 CURD END
+
+// 用户管理 CURD START
+export function getUser(params) {
+  return request({
+    url: '/regiontasks/',
+    method: 'get',
+    params
+  })
+}
+
+export function createUser(params) {
+  return request({
+    url: '/regiontasks/',
+    method: 'post',
+    data: params
+  })
+}
+
+export function editUser(params) {
+  return request({
+    url: '/regiontasks/' + params.id + '/',
+    method: 'put',
+    data: {
+      schedule: params.schedule
+    }
+  })
+}
+
+export function delUser(params) {
+  return request({
+    url: '/regiontasks/' + params + '/',
+    method: 'DELETE'
+  })
+}
+
+export function resetPassword(params) {
+  return request({
+    url: '/regiontasks/' + params.id + '/',
+    method: 'put'
+  })
+}
+// 用户管理 CURD END

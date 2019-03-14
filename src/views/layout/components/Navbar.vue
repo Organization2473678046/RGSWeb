@@ -1,7 +1,11 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
-    <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
-    <breadcrumb />
+    <hamburger
+      :toggle-click="toggleSideBar"
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+    />
+    <breadcrumb/>
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         <img src="@/assets/images/user.png" class="user-avatar">
@@ -12,48 +16,60 @@
           <span style="display:block;">{{ this.$store.getters.name }}</span>
         </el-dropdown-item>
         <router-link class="inlineBlock" to="/">
-          <el-dropdown-item divided>
-            主页
-          </el-dropdown-item>
+          <el-dropdown-item divided>主页</el-dropdown-item>
         </router-link>
+        <el-dropdown-item divided>
+          <span @click="versionDialog">更新记录</span>
+        </el-dropdown-item>
         <el-dropdown-item divided>
           <span style="display:block;" @click="logout">退出</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    <version-notes :dialog-visible="dialogVisible" :handle-close="handleClose"/>
   </el-menu>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
+import { mapGetters } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import Hamburger from "@/components/Hamburger";
+import VersionNotes from "@/components/VersionNotes";
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    VersionNotes
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar'
-    ])
+    ...mapGetters(["sidebar", "avatar"])
+  },
+  data() {
+    return {
+      dialogVisible: false
+    };
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('ToggleSideBar')
+      this.$store.dispatch("ToggleSideBar");
     },
     logout() {
       // this.$store.dispatch('LogOut').then(() => {
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
-      this.$store.dispatch('FedLogOut').then(() => {
-        location.reload()
-      })
+      this.$store.dispatch("FedLogOut").then(() => {
+        location.reload();
+      });
+    },
+    versionDialog() {
+      this.dialogVisible = true;
+    },
+    handleClose(done) {
+      this.dialogVisible = false;
     }
   }
-}
+};
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

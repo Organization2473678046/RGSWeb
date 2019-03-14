@@ -1,9 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!--<el-input placeholder="搜索进度" style="width: 200px;" class="filter-item" />-->
-      <!--<el-button class="filter-item" type="primary" icon="el-icon-search" >搜索</el-button>-->
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
+      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
+      <el-button class="filter-item" id="createProject" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">创建项目</el-button>
+    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="dialogFileTreeVisible = true">帮助</el-button>
     </div>
 
     <el-table
@@ -13,51 +14,55 @@
       border
       fit
       highlight-current-row
+      @sort-change="sortChange"
       style="width: 100%;">
       <el-table-column label="序号" prop="id" sortable="custom" align="center" width="75">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目名称">
+      <el-table-column prop="name" label="项目名称" sortable="custom">
         <template slot-scope="scope">
-          <span>{{ scope.row.name }}</span>
+          <!-- <span>{{ scope.row.name }}</span> -->
+          <router-link :to="'/project' + scope.row.id + '/taskpackageList'" class="link-type">
+            <span>{{ scope.row.name }}</span>
+          </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="项目状态">
+      <el-table-column prop="status" label="项目状态" sortable="custom">
         <template slot-scope="scope">
           <span>{{ scope.row.status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目描述">
+      <el-table-column label="项目描述" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{ scope.row.describe }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="160">
+      <el-table-column prop="createtime" label="创建时间" width="160" sortable="custom">
         <template slot-scope="scope">
           <span>{{ scope.row.createtime | formatDate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
-          <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button type="primary" :disabled="scope.row.status === '处理完成'" size="small" @click="handleUpload(scope.row.id, scope.row.name)">上传GDB<i class="el-icon-upload el-icon--right"/></el-button>
+          <!-- <el-button :disabled="scope.row.name !== null" type="primary" size="small" @click="handleUpdate(scope.row)">修改</el-button> -->
           <!--<el-button :disabled="scope.row.name !== null" size="mini" type="danger" @click="deleteData(scope.row.id)">删除</el-button>-->
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
-      :total="total"
+      v-show="projectTotal>0"
+      :total="projectTotal"
       :page.sync="listQuery.page"
       :limit.sync="listQuery.limit"
-      @pagination=""/>
+      @pagination="getList"/>
 
-    <!-- 创建项目Dialog -->
+    <!-- 创建&编辑项目Dialog -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="projectList" :model="projectList" :rules="projectListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
+      <el-form ref="projectForm" :model="projectList" :rules="projectListRules" label-position="left" label-width="90px" style="width: 400px; margin-left:50px;">
         <el-form-item label="项目名称" prop="name">
           <el-input v-model="projectList.name" placeholder="请输入项目名称"/>
         </el-form-item>
@@ -74,7 +79,7 @@
     <!-- 上传项目Dialog -->
     <el-dialog :visible.sync="dialogUpVisible" title="上传项目GDB文件">
       <uploader
-        :url="'http://192.168.3.120:8000/v8/regiontasks/'"
+        :url="'http://192.168.3.120:8000/v9/regiontasks/'"
         :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
         :http_method="'PUT'"
         :filters="{
@@ -112,6 +117,28 @@
       <el-button type="danger" @click="up.start()">开始上传</el-button>
     </el-dialog>
 
+
+    <!-- 展示上传GDB文件目录结构Dialog -->
+    <el-dialog title="帮助" :visible.sync="dialogFileTreeVisible">
+
+      <div class="custom-tree-container">
+        <div class="block">
+          <h2>上传GDB文件目录结构</h2>
+          <el-tree
+            :data="fileTreeData"
+            default-expand-all
+            :expand-on-click-node="false"
+            indent="22">
+            <span class="custom-tree-node" slot-scope="{ node, treeData }">
+              <span><i class="node-icon" :class="node.icon"></i>{{ node.label }}</span>
+            </span>
+          </el-tree>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFileTreeVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -144,10 +171,28 @@ export default {
     }
   },
   data() {
+    const treeData = [{
+      label: 'GDB压缩包文件',
+        icon: "el-icon-tickets",
+        children: [{
+          icon: "el-icon-tickets",
+          label: 'source',
+          children: [{}]
+        },
+        {
+          icon: "el-icon-tickets",
+          label: 'temp'
+        },
+        {
+          icon: "el-icon-tickets",
+          label: 'xxxx.xml'
+        }]     
+    }];
     return {
       tableKey: 0,
       dialogFormVisible: false,
       dialogUpVisible: false,
+      dialogFileTreeVisible: false,
       dialogStatus: '',
       projectList: {
         // id: undefined,
@@ -158,10 +203,12 @@ export default {
         name: [{ required: true, message: '*必填*', trigger: 'blur' }],
         describe: [{ required: true, message: '*必填*', trigger: 'blur' }]
       },
-      total: 0,
+      projectTotal: 0,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        search: null,
+        ordering: null
       },
       list: null,
       textMap: {
@@ -173,7 +220,8 @@ export default {
       up: {},
       tableData: [],
       projectId: '',
-      projectName: ''
+      projectName: '',
+      fileTreeData: JSON.parse(JSON.stringify(treeData))
     }
   },
   watch: {
@@ -197,14 +245,35 @@ export default {
     this.getList()
   },
   methods: {
-    getList() {
+    getList(listQuery) {
+      if (listQuery !== undefined) {
+        this.listQuery.limit = listQuery.limit
+      }
       getProjectRegional(this.listQuery).then(response => {
-        this.list = response.data
-        // this.total = response.data.count
+        this.list = response.data.results
+        this.projectTotal = response.data.count
         this.listLoading = false
       }).catch(error => {
         reject(error)
       })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    sortChange(data) {
+      const { prop, order } = data
+      if (prop !== '') {
+        this.sortByID(order, prop)
+      }
+    },
+    sortByID(order, prop) {
+      if (order === 'ascending') {
+        this.listQuery.ordering = prop + ',id'
+      } else {
+        this.listQuery.ordering = '-' + prop + ',id'
+      }
+      this.getList()
     },
     handleCreate() {
       this.dialogStatus = 'create'
@@ -214,16 +283,20 @@ export default {
       })
     },
     createData() {
-      createProjectRegional(this.projectList).then(response => {
-        this.dialogFormVisible = false
-        this.$message({
-          message: '创建成功！',
-          type: 'success'
-        })
-        this.getList()
-        this.listLoading = false
-      }).catch(error => {
-        reject(error)
+      this.$refs.projectForm.validate(valid => {
+        if (valid) {
+          createProjectRegional(this.projectList).then(response => {
+            this.dialogFormVisible = false
+            this.$message({
+              message: '创建成功！',
+              type: 'success'
+            })
+            this.getList()
+            this.listLoading = false
+          }).catch(error => {
+            reject(error)
+          })
+        }
       })
     },
     handleUpdate(row) {
@@ -283,9 +356,26 @@ export default {
       })
     },
     beforeUpload(up, file) {
-      up.settings.url = 'http://192.168.3.120:8000/v8/regiontasks/' + this.projectId + '/'
+      up.settings.url = 'http://192.168.3.120:8000/v9/regiontasks/' + this.projectId + '/'
       up.setOption('multipart_params', { 'name': this.projectName, 'filemd5': file.md5 })
     }
   }
 }
 </script>
+
+<style>
+  .custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+  }
+
+  h2{text-align:center;}
+
+  .node-icon {
+    margin-right: 5%;
+  }
+</style>

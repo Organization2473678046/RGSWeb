@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "axios": "0.18.0",
+    "driver.js": "^0.9.3",
     "echarts": "^4.2.0-rc.2",
     "element-ui": "2.4.6",
     "jquery": "^3.3.1",
@@ -53,6 +54,10 @@
     "friendly-errors-webpack-plugin": "1.7.0",
     "html-webpack-plugin": "4.0.0-alpha",
     "mini-css-extract-plugin": "0.4.1",
+    "mocha": "^6.0.2",
+    "mochawesome": "^3.1.1",
+    "mochawesome-merge": "^1.0.7",
+    "mochawesome-report-generator": "^3.1.5",
     "node-notifier": "5.2.1",
     "node-sass": "^4.7.2",
     "optimize-css-assets-webpack-plugin": "5.0.0",

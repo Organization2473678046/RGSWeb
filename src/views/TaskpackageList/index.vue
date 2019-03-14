@@ -2,7 +2,7 @@
   <div class="app-container">
 
     <div class="filter-container">
-      <el-input v-model="listQuery.search" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-input v-model="listQuery.search" id="taskSearch" placeholder="请输入需要搜索的信息" style="width: 300px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
@@ -68,6 +68,7 @@
             type="success"
             class="download-button"
             size="mini"
+            :id="'downloadTask' + scope.row.id"
             icon="el-icon-download"
             @click="downloadTaskpackage(scope.row.file)"/>
         </template>
@@ -77,6 +78,7 @@
           <el-button
             type="primary"
             size="small"
+            id="dataMgmt"
             icon="el-icon-edit-outline"
             @click="handleData(subversionListQuery, scope.row.id, scope.row.name)"/>
           <span v-show="role === 'admin' && scope.row.newtaskpackagesonfornotice !== 0" class="data-remind">{{ scope.row.newtaskpackagesonfornotice }}</span>
@@ -116,11 +118,11 @@
         :model="taskpackageForm"
         :rules="taskpackageRules">
         <el-form-item prop="remarks">
-          <el-input v-model="taskpackageForm.remarks" name="remarks" placeholder="请输入备注" style="width: 260px;" class="filter-item"/>
+          <el-input v-model="taskpackageForm.remarks" name="remarks" placeholder="请输入备注" style="width: 260px;" />
         </el-form-item>
         <el-form-item prop="handleProgress">
           <el-select v-model="taskpackageForm.handleProgress" placeholder="请选择进度" prop="handleProgress" class="taskinfo-item" style="width: 140px">
-            <el-option v-for="progress in handleProgressList" :label="progress.schedule" :key="progress.id" :value="progress.schedule"/>
+            <el-option v-for="progress in handleProgressList" :id="'hp' + progress.id" :label="progress.schedule" :key="progress.id" :value="progress.schedule"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -129,7 +131,7 @@
             :max_retries="3"/>-->
           <uploader
             ref="uploader"
-            :url="'http://192.168.3.120:8000/v7/taskpackagesons/'"
+            :url="'http://192.168.3.120:8000/v9/taskpackagesons/'"
             :http_method="'POST'"
             :headers = "{'Authorization': 'JWT ' + this.$store.getters.token}"
             :filters="{
@@ -389,6 +391,7 @@ export default {
       }
       this.listQuery.regiontask_name = this.regionalName
       getTaskpackageList(this.listQuery).then(response => {
+        debugger
         this.taskpackageList = response.data.results
         this.tpTotal = response.data.count
         this.listLoading = false
@@ -469,6 +472,7 @@ export default {
     },
     handleClose(done) {
       done()
+      this.subversionListQuery.page = 1
       this.fetchData()
     },
     atOperatorFun(name, taskID) {
@@ -537,7 +541,7 @@ export default {
       // 拉取进度列表
       this.scheduleQuery.regiontask_name = this.regionalName
       getTPSchedule(this.scheduleQuery).then(response => {
-        this.handleProgressList = response.data
+        this.handleProgressList = response.data.results
         this.listLoading = false
       }).catch(error => {
       })

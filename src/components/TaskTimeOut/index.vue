@@ -81,8 +81,8 @@ export default {
   },
   methods: {
     TaskTimeOutCheck(){
+      this.taskListQuery.limit = 999
       taskTimeOutRemind(this.taskListQuery).then(response => {
-        debugger
         if(response.data.count !== 0){
           this.whetherTimeOut = response.data.results[0].isoverdue
           for (let i = 0; i < response.data.results.length; i++) {

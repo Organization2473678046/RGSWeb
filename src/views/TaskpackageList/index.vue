@@ -448,7 +448,6 @@ export default {
       }
       this.listQuery.regiontask_name = this.regionalName
       getTaskpackageList(this.listQuery).then(response => {
-        debugger
         this.taskpackageList = response.data.results
         this.tpTotal = response.data.count
         this.listLoading = false

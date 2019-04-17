@@ -46,7 +46,6 @@ const user = {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
           // 后台暂时返回"role": true。 包装成真实权限
-          debugger
           const rdata = response.data
           const data = {}
           const roles = []

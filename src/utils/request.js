@@ -30,7 +30,7 @@ service.interceptors.response.use(
   response => response,
   error => {
     console.log('err' + error) // for debug
-    /* Message({
+    /*Message({
       message: error.message,
       type: 'error',
       duration: 5 * 1000

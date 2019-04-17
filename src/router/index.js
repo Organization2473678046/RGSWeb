@@ -20,6 +20,7 @@ export const constantRouterMap = [
     children: [{
       path: 'home',
       component: () => import('@/views/home/index'),
+      props: (route) => ({ regionalName: '东南区域1800幅' }),
       meta: { title: '主页', icon: 'tree', noCache: true }
     }]
   }
